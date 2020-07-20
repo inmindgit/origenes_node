@@ -7,6 +7,8 @@ module.exports = {
     // enviar el numero al BC para encontrar coincidencias
     // const muestras = await BCService.findMuestrasWhere(number: number);
     
-    // return res.render('muestras/list', { muestras: muestras })
+    return res.render('coincidencias/search', {
+      title: 'Buscar coincidencias'
+    });
   }
 }
