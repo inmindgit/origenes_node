@@ -11,7 +11,8 @@ module.exports = {
     // este numero debera ser devuelto en el formulario para ser enviado a BC en accion `create`
 
     return res.render('muestras/new', {
-      title: 'Cargar nueva muestra'
+      title: 'Cargar nueva muestra',
+      number
     });
   },
 
