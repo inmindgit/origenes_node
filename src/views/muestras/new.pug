@@ -1,0 +1,40 @@
+extends ../layout
+
+block content
+  div.content-header
+    div.container
+      div.row.mb-2
+        div.col-sm-12
+          h1= title
+      
+      .content
+        .row
+          .col-lg-12
+            .card
+              .card-body
+                .row.no-gutters
+                  .col-md-4.pt-2.text-center.align-items-center
+                    h4 Número de actuación
+                    h3 1I2Y3823
+                  .col-md-8
+                    h4 Datos personales
+                    .row
+                      .form-group.col-6
+                        input(type="text" id="inputNombre" class="form-control" placeholder="Nombre")
+                      .form-group.col-6
+                        input(type="text" id="inputNombre" class="form-control" placeholder="Apellido")
+                    .row
+                      .form-group.col-12
+                        input(type="text" id="inputNombre" class="form-control" placeholder="Documento de identificación")
+                    .row
+                      .form-group.col-12
+                        input(type="text" id="inputNombre" class="form-control" placeholder="País de Nacimiento")
+                    .row
+                      .form-group.col-12
+                        input(type="text" id="inputNombre" class="form-control" placeholder="País de recolección de la muestra")
+                    .row
+                      .form-group.col-12
+                        input(type="text" id="inputNombre" class="form-control" placeholder="Laboratorio de procedencia")
+              .card-footer
+                butto(type="submit" class="btn btn-primary float-right") Enviar
+                butto(type="submit" class="btn btn-default") Cancelar
