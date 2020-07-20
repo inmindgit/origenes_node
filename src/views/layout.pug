@@ -1,7 +1,34 @@
 doctype html
 html
   head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
     title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    block content
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+
+    link(rel='stylesheet', href='/vendor/admin-lte/plugins/fontawesome-free/css/all.min.css')
+    link(rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css")
+    link(rel='stylesheet', href='/vendor/admin-lte/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css')
+    link(rel='stylesheet', href='/vendor/admin-lte/dist/css/adminlte.min.css')
+    link(rel='stylesheet', href='/vendor/admin-lte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css')
+    link(rel='stylesheet', href='/vendor/admin-lte/plugins/daterangepicker/daterangepicker.css')
+    link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700")
+  body.layout-top-nav
+    div(class="wrapper")
+      include shared/navbar.pug
+      div(class="content-wrapper")
+        block content
+    //- else
+    //-   div(class="login-box")
+    //-     div(class="login-logo")
+    //-     block content
+
+
+    script(src="/vendor/admin-lte/plugins/jquery/jquery.min.js")
+    script(src="/vendor/admin-lte/plugins/jquery-ui/jquery-ui.min.js")
+    script.
+      $.widget.bridge('uibutton', $.ui.button)
+    script(src="/vendor/admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js")
+    script(src="/vendor/admin-lte/plugins/moment/moment.min.js")
+    script(src="/vendor/admin-lte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js")
+    script(src="/vendor/admin-lte/dist/js/adminlte.js")
