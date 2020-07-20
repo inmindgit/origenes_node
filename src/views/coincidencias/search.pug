@@ -1,0 +1,35 @@
+extends ../layout
+
+block content
+  div.content-header
+    div.container
+      div.row.mb-2
+        div.col-sm-12
+          h1= title
+
+      .content
+        .row
+          .col-lg-12
+            .card.py-2
+              .card-body
+                .row.justify-content-md-center
+                  .col-md-6
+                    .form-inline
+                      .input-group.input-group-lg
+                        input(type="text" id="inputNombre" class="form-control form-control-lg" placeholder="Ingrese el número de actuación para buscar coincidencia")
+                        span.input-group-append
+                          button.btn.btn-default
+                            i.fas.fa-search.fa-fw
+        .row
+          .col-lg-12
+            .card.py-2
+              .card-header
+                h3.card-title Resultados Obtenidos
+              .card-body.table-responsive.p-0
+                table.table.table-hover.text-nowrap
+                  thead
+                    tr
+                      th Número de actuación
+                      th Fecha de la muestra
+                      th Resultado
+                      th Región
