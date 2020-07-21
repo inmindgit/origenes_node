@@ -1,6 +1,5 @@
 include "List.aes"
 include "Pair.aes"
-
 contract FreedomOrigins =
   record file_Storage = {
          file_storage_id:int,
@@ -53,6 +52,10 @@ contract FreedomOrigins =
   datatype event = //tbc
       AddUser(string)
     | AddHuman(string)
+    | AskForDNASample(string)
+    | AddDNASample(string)
+    | FoundDNAMatch(string)
+    | Login(address)
   
   record state = {
          active_contract:bool,
@@ -72,7 +75,8 @@ contract FreedomOrigins =
     require (are_you_sure == "yes","Check your confirmation")
     put(state{active_contract=false})
   
-  
+  function isAuthorized() =
+    require(Map.member(Call.caller,state.platform_users),"not allowed")
     
   function isAdmin() =
     if(Call.caller!=Contract.creator)
@@ -115,12 +119,14 @@ contract FreedomOrigins =
     put(state{humans[case_number]=human_to_add})
     put(state{personal_datas[personal_data_to_add.document_id]=personal_data_to_add})
     put(state{lhumans=human_to_add::state.lhumans})
+    Chain.event(AddHuman(case_number))
     true
 
   stateful entrypoint add_dna_sample(sample_to_add:dNA_Sample,case_number:string) =
     isLab()
     require(Map.member(case_number,state.humans),"doesn't exist")
     put(state{dna_samples[case_number]=sample_to_add})
+    Chain.event(AddDNASample(case_number))
     true
 
   entrypoint ask_for_sample_dna_test(document_id:string) : string = 
@@ -128,7 +134,10 @@ contract FreedomOrigins =
     let human = get_human_by_id(document_id)
     switch (human)
       None=>abort("doesn't exist")
-      Some(human)=>human.case_number
+      Some(human)=>
+        Chain.event(AskForDNASample(human.case_number)) 
+        human.case_number
+                
 
 
   stateful entrypoint add_user(email_to_add:string, name_to_add:string, profile_id:int, address_to_add:address) = 
@@ -137,7 +146,22 @@ contract FreedomOrigins =
     let profile=state.profiles[profile_id]
     let platform_user_to_add =  {user_name=email_to_add, email= email_to_add, profile=profile, unique_address=address_to_add}
     put(state{platform_users[address_to_add]=platform_user_to_add})
+    Chain.event(AddUser(email_to_add))     
     true
+
+  function there_is_match_str(str1:list(sTRIndicator),str2:list(sTRIndicator),fail_count:int): bool =
+      if (fail_count==3)
+        abort("there is no match")
+      switch(str1)
+        [] => fail_count<3
+        x::tail=>
+          switch(str2)
+            [] => fail_count<3
+            y::ytail => 
+              if(!(x.value2==y.value1||x.value1==y.value2||x.value1==y.value1||x.value2==y.value2))
+                there_is_match_str(tail,ytail,fail_count+1)
+              else
+                there_is_match_str(tail,ytail,fail_count)
 
   function there_is_match_snp(snp1:list(string),snp2:list(string),fail_count:int): bool =
     if (fail_count==4)
@@ -148,7 +172,7 @@ contract FreedomOrigins =
         switch(snp2)
           [] => fail_count<4
           y::ytail => 
-            if(x!=y)
+            if(x!=y&&(x!="10"&&y=="01"||y=="10"&&x!="01"))
               there_is_match_snp(tail,ytail,fail_count+1)
             else
               there_is_match_snp(tail,ytail,fail_count)
@@ -157,6 +181,11 @@ contract FreedomOrigins =
     switch(Map.member(case_number,state.dna_samples))
       false => []
       true => state.dna_samples[case_number].analysis.snp_result
+  
+  function get_str_dna_by_case_number(case_number:string):list(sTRIndicator) =
+    switch(Map.member(case_number,state.dna_samples))
+      false => []
+      true => state.dna_samples[case_number].analysis.str_result
     
 
   function try_to_find_snp(snp:list(string), humans_universe:list(human)) : list(human) = 
@@ -167,13 +196,27 @@ contract FreedomOrigins =
         else
           try_to_find_snp(snp,tail)
       []=>[]
+
+  function try_to_find_str(str:list(sTRIndicator), humans_universe:list(human)) : list(human) = 
+    switch(humans_universe)
+      x::tail => 
+        if(there_is_match_str(str,get_str_dna_by_case_number(x.case_number),0))
+          x::try_to_find_str(str,tail)
+        else
+          try_to_find_str(str,tail)
+      []=>[]
     
   entrypoint look_for_match(sample_to_find_match:dNA_Sample):list(human) = 
     isOperator()
     isViewer()
     switch(sample_to_find_match.system.name)
       "SNP" => try_to_find_snp(sample_to_find_match.analysis.snp_result,state.lhumans)
-      "STR" => abort("not implemented")
+      "STR" => try_to_find_str(sample_to_find_match.analysis.str_result,state.lhumans)
+  
+  entrypoint user_registration(): platformUser =
+    isAuthorized()
+    Chain.event(Login(Call.caller))
+    state.platform_users[Call.caller]
 
   entrypoint get_humansl():list(human) = 
     state.lhumans
