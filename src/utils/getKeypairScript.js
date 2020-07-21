@@ -5,7 +5,7 @@ getKeypair = async () => {
   try{
     const keypair = await Crypto.generateKeyPair()
 
-    console.log(process.env.PUBLIC_KEY);
+    console.log(keypair);
 
   } catch(err){
     console.log(JSON.stringify({Error: err}))
