@@ -1,0 +1,171 @@
+include "List.aes"
+include "Pair.aes"
+
+contract FreedomOrigins =
+  record file_Storage = {
+         file_storage_id:int,
+         name:int,
+         finget_print:hash}
+         
+  record human = {
+      personal_data:personal_Data,
+      case_number:string}
+      
+  record personal_Data = {
+      case_number:string,
+      document_id:string,
+      registry_country:string,
+      identity_country:string,
+      name:string,
+      last_name:string,
+      address:string,
+      phone_number:string,
+      email:string,
+      contact:string}
+
+  record platformUser = {
+      user_name:string,
+      email:string,
+      profile:profile,
+      unique_address:address}
+
+  record dNA_Analysis = {
+      doneDate:string,
+      case_number:string,
+      snp_result:list(string),
+      str_result:sTR}
+
+  record dNA_Sample = {
+      system:system,
+      analysis:dNA_Analysis}
+      
+  record sTRIndicator = {
+      name:string,
+      value1:int,
+      value2:int}
+      
+  record sTR = {
+      subject:list(sTRIndicator),  //Supongo en el mismo orden
+      alleged_parent:list(sTRIndicator),
+      isParent:bool}
+
+  record system = {
+      name:string} //Snip o STR
+
+  record profile = {
+      name:string}
+
+  datatype event = //tbc
+      AddUser(string)
+    | AddHuman(string)
+  
+  record state = {
+         active_contract:bool,
+         profiles:map(int, profile),
+         systems : map(int,system),
+         files:map(int,file_Storage),
+         humans:map(string, human), //case_number
+         lhumans:list(human),
+         personal_datas:map(string,personal_Data), //document id
+         platform_users:map(address,platformUser),
+         dna_samples:map(string,dNA_Sample)} //case_number
+
+  entrypoint version() : int = 1
+
+  stateful entrypoint kill_contract(are_you_sure:string) = 
+    require (Call.caller==Contract.creator,"Not allowed")
+    require (are_you_sure == "yes","Check your confirmation")
+    put(state{active_contract=false})
+  
+  
+    
+  function isAdmin() =
+    require(Map.member(Call.caller,state.platform_users),"not allowed")
+    require(state.platform_users[Call.caller].profile.name=="Admin","not allowed")
+
+  function isOperator() =
+    require(Map.member(Call.caller,state.platform_users),"not allowed")
+    require(state.platform_users[Call.caller].profile.name=="Operator","not allowed")
+
+  function isLab() =
+    require(Map.member(Call.caller,state.platform_users),"not allowed")
+    require(state.platform_users[Call.caller].profile.name=="Lab","not allowed")
+
+  function isViewer() =
+    require(Map.member(Call.caller,state.platform_users),"not allowed")
+    require(state.platform_users[Call.caller].profile.name=="Viewer","not allowed")
+  
+  stateful entrypoint init()={active_contract=true, profiles={[1] = {name="Admin"},[2] = {name="Operator"},[3] = {name="Lab"},[4] = {name="Viewer"}},
+    systems = {[1]={name="SNP"},[2]={name="STR"}},
+    files={},
+    humans={},
+    lhumans=[],
+    personal_datas={},
+    platform_users={},
+    dna_samples={}}
+
+
+  function get_human_by_id(document_id_to_find:string) : option(human) =
+    switch(Map.lookup(document_id_to_find,state.personal_datas))
+      None=>abort("doesn't exist")
+      Some(personal_data)=>Map.lookup(personal_data.case_number,state.humans)
+
+  stateful entrypoint add_human(case_number:string, human_to_add:human, personal_data_to_add:personal_Data) = 
+    isOperator()
+    require(!Map.member(case_number,state.humans),"already exist")
+    put(state{humans[case_number]=human_to_add})
+    put(state{personal_datas[personal_data_to_add.document_id]=personal_data_to_add})
+    put(state{lhumans=human_to_add::state.lhumans})
+
+  stateful entrypoint add_dna_sample(sample_to_add:dNA_Sample,case_number:string) =
+    isLab()
+    require(Map.member(case_number,state.humans),"doesn't exist")
+    put(state{dna_samples[case_number]=sample_to_add})
+
+  entrypoint ask_for_sample_dna_test(document_id:string) : string = 
+    isOperator()
+    let human = get_human_by_id(document_id)
+    switch (human)
+      None=>abort("doesn't exist")
+      Some(human)=>human.case_number
+
+
+  stateful entrypoint add_user(email_to_add:string, name_to_add:string, profile_id:int, address_to_add:address) = 
+    isAdmin()
+    require(Map.member(profile_id,state.profiles),"doesn't exist")
+    let profile=state.profiles[profile_id]
+    let platform_user_to_add =  {user_name=email_to_add, email= email_to_add, profile=profile, unique_address=address_to_add}
+    put(state{platform_users[address_to_add]=platform_user_to_add})
+
+  function there_is_match_snp(snp1:list(string),snp2:list(string),fail_count:int): bool =
+    if (fail_count==4)
+      abort("there is no match")
+    switch(snp1)
+      [] => fail_count<4
+      x::tail=>
+        switch(snp2)
+          [] => fail_count<4
+          y::ytail => 
+            if(x!=y)
+              there_is_match_snp(tail,ytail,fail_count+1)
+            else
+              there_is_match_snp(tail,ytail,fail_count)
+              
+  function get_snp_dna_by_case_number(case_number:string):list(string) =
+    state.dna_samples[case_number].analysis.snp_result
+
+  function try_to_find_snp(snp:list(string), humans_universe:list(human)) : list(human) = 
+    switch(humans_universe)
+      x::tail => 
+        if(there_is_match_snp(snp,get_snp_dna_by_case_number(x.case_number),0))
+          x::try_to_find_snp(snp,tail)
+        else
+          try_to_find_snp(snp,tail)
+      []=>[]
+    
+  entrypoint look_for_match(sample_to_find_match:dNA_Sample):list(human) = 
+    isOperator()
+    isViewer()
+    switch(sample_to_find_match.system.name)
+      "SNP" => try_to_find_snp(sample_to_find_match.analysis.snp_result,state.lhumans)
+      "STR" => abort("not implemented")
