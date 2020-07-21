@@ -9,11 +9,29 @@ block content
       
       .content
         .row
-          .col-3.offset-6
-            ul.nav.nav-pills.nav-fills
-              li.nav-item
-                a(href="#" class="nav-link") STR
-              li.nav-item
-                a(href="#" class="nav-link") STR
-          .col-12
-            include str.pug
+          .col-lg-12
+            .card
+              .card-body
+                .row.justify-content-center
+                  div
+                    ul.nav.nav-pills.nav-fills(role="tablist")
+                      li.nav-item.mx-2
+                        a(class="btn btn-lg btn-default active" href="#custom-tabs-str" id="custom-tabs-form" data-toggle="pill" role="tab") STP
+                      li.nav-item.mx-2
+                        a(class="btn btn-lg btn-default" href="#custom-tabs-snp" id="custom-tabs-form" data-toggle="pill" role="tab") SNIP
+        .row
+          .col-lg-12
+            .card
+              .card-body
+                .tab-content(id="custom-tabs-form-tabContent")
+                  .tab-pane.fade(id="custom-tabs-snp" role="tabpanel")
+                    .row
+                      .col-12
+                        include snip.pug
+                  .tab-pane.fade.active.show(id="custom-tabs-str" role="tabpanel")
+                    .row
+                      .col-12
+                        include str.pug
+              .card-footer
+                button(type="submit" class="btn btn-primary float-right") Enviar
+                button(type="submit" class="btn btn-default") Cancelar
