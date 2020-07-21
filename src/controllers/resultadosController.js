@@ -1,7 +1,8 @@
 module.exports = {
   async newResultado(req, res) {
-    // renderizar el formulario para carga de resultados
-    // return res.render('resultados/new', {locals: locals})
+    return res.render('resultados/new', {
+      title: 'Carga de resultados'
+    })
   },
 
   async createSNP(req, res) {
@@ -17,9 +18,14 @@ module.exports = {
 
   async createSTR(req, res) {
     const {
-      number
+      number,
+      str
     } = req.body;
 
+    const obj = req.body;
+    console.log('PARAMETERSSSSS: ', obj['marcadores[0]']);
+    console.log('PARAMETERSSSSS: ', obj['marcadores[1]']);
+    console.log('PARAMETERSSSSS: ', obj['marcadores[2]']);
     // enviar los datos ingresados al BC
 
     // redireccionar al usuari al lugar apropiado si esta todo OK, caso contrario mostrar errores.
