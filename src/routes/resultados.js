@@ -6,9 +6,9 @@ const resultadosController = require('../controllers/resultadosController');
 router.get('/new', resultadosController.newResultado);
 
 // Ruta encargada de crear una muestra STR
-router.get('/createSNP', resultadosController.createSNP);
+router.post('/createSNP', resultadosController.createSNP);
 
 // Ruta encargada de crear una muestra SNP
-router.get('/createSTR', resultadosController.createSTR);
+router.post('/createSTR', resultadosController.createSTR);
 
 module.exports = router;

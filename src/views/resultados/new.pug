@@ -1,0 +1,19 @@
+extends ../layout
+
+block content
+  div.content-header
+    div.container
+      div.row.mb-2
+        div.col-sm-12
+          h1= title
+      
+      .content
+        .row
+          .col-3.offset-6
+            ul.nav.nav-pills.nav-fills
+              li.nav-item
+                a(href="#" class="nav-link") STR
+              li.nav-item
+                a(href="#" class="nav-link") STR
+          .col-12
+            include str.pug
