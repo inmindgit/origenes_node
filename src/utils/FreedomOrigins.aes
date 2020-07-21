@@ -33,7 +33,7 @@ contract FreedomOrigins =
       doneDate:string,
       case_number:string,
       snp_result:list(string),
-      str_result:sTR}
+      str_result:list(sTRIndicator)}
 
   record dNA_Sample = {
       system:system,
@@ -43,12 +43,7 @@ contract FreedomOrigins =
       name:string,
       value1:int,
       value2:int}
-      
-  record sTR = {
-      subject:list(sTRIndicator),  //Supongo en el mismo orden
-      alleged_parent:list(sTRIndicator),
-      isParent:bool}
-
+  
   record system = {
       name:string} //Snip o STR
 
@@ -80,20 +75,24 @@ contract FreedomOrigins =
   
     
   function isAdmin() =
-    require(Map.member(Call.caller,state.platform_users),"not allowed")
-    require(state.platform_users[Call.caller].profile.name=="Admin","not allowed")
+    if(Call.caller!=Contract.creator)
+      require(Map.member(Call.caller,state.platform_users),"not allowed")
+      require(state.platform_users[Call.caller].profile.name=="Admin","not allowed")
 
   function isOperator() =
-    require(Map.member(Call.caller,state.platform_users),"not allowed")
-    require(state.platform_users[Call.caller].profile.name=="Operator","not allowed")
+    if(Call.caller!=Contract.creator)
+      require(Map.member(Call.caller,state.platform_users),"not allowed")
+      require(state.platform_users[Call.caller].profile.name=="Operator","not allowed")
 
   function isLab() =
-    require(Map.member(Call.caller,state.platform_users),"not allowed")
-    require(state.platform_users[Call.caller].profile.name=="Lab","not allowed")
+    if(Call.caller!=Contract.creator)
+      require(Map.member(Call.caller,state.platform_users),"not allowed")
+      require(state.platform_users[Call.caller].profile.name=="Lab","not allowed")
 
   function isViewer() =
-    require(Map.member(Call.caller,state.platform_users),"not allowed")
-    require(state.platform_users[Call.caller].profile.name=="Viewer","not allowed")
+    if(Call.caller!=Contract.creator)
+      require(Map.member(Call.caller,state.platform_users),"not allowed")
+      require(state.platform_users[Call.caller].profile.name=="Viewer","not allowed")
   
   stateful entrypoint init()={active_contract=true, profiles={[1] = {name="Admin"},[2] = {name="Operator"},[3] = {name="Lab"},[4] = {name="Viewer"}},
     systems = {[1]={name="SNP"},[2]={name="STR"}},
@@ -116,11 +115,13 @@ contract FreedomOrigins =
     put(state{humans[case_number]=human_to_add})
     put(state{personal_datas[personal_data_to_add.document_id]=personal_data_to_add})
     put(state{lhumans=human_to_add::state.lhumans})
+    true
 
   stateful entrypoint add_dna_sample(sample_to_add:dNA_Sample,case_number:string) =
     isLab()
     require(Map.member(case_number,state.humans),"doesn't exist")
     put(state{dna_samples[case_number]=sample_to_add})
+    true
 
   entrypoint ask_for_sample_dna_test(document_id:string) : string = 
     isOperator()
@@ -136,6 +137,7 @@ contract FreedomOrigins =
     let profile=state.profiles[profile_id]
     let platform_user_to_add =  {user_name=email_to_add, email= email_to_add, profile=profile, unique_address=address_to_add}
     put(state{platform_users[address_to_add]=platform_user_to_add})
+    true
 
   function there_is_match_snp(snp1:list(string),snp2:list(string),fail_count:int): bool =
     if (fail_count==4)
@@ -152,7 +154,10 @@ contract FreedomOrigins =
               there_is_match_snp(tail,ytail,fail_count)
               
   function get_snp_dna_by_case_number(case_number:string):list(string) =
-    state.dna_samples[case_number].analysis.snp_result
+    switch(Map.member(case_number,state.dna_samples))
+      false => []
+      true => state.dna_samples[case_number].analysis.snp_result
+    
 
   function try_to_find_snp(snp:list(string), humans_universe:list(human)) : list(human) = 
     switch(humans_universe)
@@ -169,3 +174,11 @@ contract FreedomOrigins =
     switch(sample_to_find_match.system.name)
       "SNP" => try_to_find_snp(sample_to_find_match.analysis.snp_result,state.lhumans)
       "STR" => abort("not implemented")
+
+  entrypoint get_humansl():list(human) = 
+    state.lhumans
+  
+  entrypoint get_humansm():map(string,human) =
+    state.humans
+  entrypoint get_dna_samples():map(string,dNA_Sample) =
+    state.dna_samples
