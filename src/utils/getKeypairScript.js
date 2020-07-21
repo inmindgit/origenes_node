@@ -1,12 +1,15 @@
 const { Crypto } = require('@aeternity/aepp-sdk');
 
-module.exports.getKeypair = async () => {
+getKeypair = async () => {
   
   try{
     const keypair = await Crypto.generateKeyPair()
 
-    return keypair;
+    console.log(process.env.PUBLIC_KEY);
+
   } catch(err){
     console.log(JSON.stringify({Error: err}))
   }
 };
+
+getKeypair()
