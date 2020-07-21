@@ -16,6 +16,6 @@ module.exports.aeternityClient = async (keypair) => {
 
     return client;
   } catch(err){
-    console.log(JSON.stringify({ErrorAEClient: err}))
+    console.log({ ErrorAEClient: err })
   }
 }
