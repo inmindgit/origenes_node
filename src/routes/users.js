@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
+const usersController = require('../controllers/usersController');
 
-/* GET users listing. */
-router.get('/users', function(req, res, next) {
-  res.send('respond with a resource');
-});
+// TODO: Agregar middleware de autenticacion
+router.get('/signIn', usersController.new);
+
+router.post('/signIn', usersController.create);
 
 module.exports = router;
