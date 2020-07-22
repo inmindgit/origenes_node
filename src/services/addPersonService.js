@@ -15,11 +15,17 @@ module.exports = {
         personalData
       )
       
-      console.log(result)
-      
-      return result.hash
+      return {
+        success: true,
+        message: '',
+        hash: result.hash
+      }
     } catch (e) {
-      console.log(e);
+      return {
+        success: false,
+        message: e.decodedError,
+        hash: e.error
+      }
     }
   }
 }

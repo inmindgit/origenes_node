@@ -6,7 +6,16 @@ block content
       div.row.mb-2
         div.col-sm-12
           h1= title
-      
+      if locals.message
+        if message.error
+          div(class="alert alert-danger" role="alert")
+            strong Ha ocurrido un error al procesar la transacción:
+            p Mensaje de error: #{message.error}
+        if message.success
+          div(class="alert alert-success" role="alert")
+            strong Transacción realizada con éxito
+            p= message.success
+        
       .content
         .row
           .col-lg-12

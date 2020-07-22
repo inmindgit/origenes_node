@@ -7,6 +7,7 @@ const { getContract } = require("./getContract");
 addHuman = async () => {
   
   try{
+    // const keypair = JSON.parse('{“publicKey”:“ak_xew1bEqH4f59jNdP9jwRmBfBWDa3uoWqMdcsoZ1F2ZkrtXTcB”,“secretKey”:“54cbdf775706568d58705c574b358831e68be41eeb35304810e7b7b4033971897e5e82de52e7e296cba9cc4167bf4be210a6e5133e32ecb9cb12d45b50b44093"}')
     const keypair = JSON.parse(process.env.KEYPAIR)
 
     console.log(keypair);
