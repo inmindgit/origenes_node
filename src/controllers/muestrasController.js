@@ -1,6 +1,8 @@
 const numberGeneratorService = require('../services/numberGeneratorService');
 const fs = require('fs');
 const path = require('path');
+const addPersonService = require('../services/addPersonService');
+const PersonalData = require('../models/PersonalData');
 
 module.exports = {
   async new(req, res){
@@ -17,15 +19,22 @@ module.exports = {
   },
 
   async create(req, res) {
+    const keypair = JSON.parse(process.env.KEYPAIR)
+
     const {
-      firstName,
+      caseNumber,
+      name,
       lastName,
-      nationalID, 
-      countryOfBirth,
-      countryOfRegion,
+      documentID, 
+      identityCountry,
+      registryCountry,
       laboratoryOfOrigin
     } = req.body;
 
+    const personalData = new PersonalData(caseNumber, name, lastName, documentID, registryCountry, identityCountry)
+
+    addPersonService.call(keypair, caseNumber, personalData)
+    
     // aqui redireccionar la request a donde haga falta
   }
 }

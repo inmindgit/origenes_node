@@ -7,4 +7,6 @@ router.get('/new', muestrasController.new);
 
 router.get('/search', searchController.searchCoincidencia);
 
+router.post('/create', muestrasController.create);
+
 module.exports = router;
