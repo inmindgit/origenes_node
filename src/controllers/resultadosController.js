@@ -1,3 +1,5 @@
+const addSnpService = require("../services/addSnpService");
+
 module.exports = {
   async newResultado(req, res) {
     return res.render('resultados/new', {
@@ -8,12 +10,29 @@ module.exports = {
   async createSNP(req, res) {
     // definir el nombre de los marcadores SNP (150 marcadores con diferentes valores posibles)
     const {
-      number
+      caseNumber
     } = req.body;
+    marcadores = req.body['marcadores[]'];
 
-    // enviar los datos cargados al BC
+    const keypair = JSON.parse(process.env.KEYPAIR);
+
+    const result = await addSnpService.call(
+      keypair,
+      caseNumber,
+      marcadores
+    );
 
     // redireccionar al usuario al lugar apropiado si esta todo OK, caso contrario mostrar errores.
+    if(result.success) {
+      req.flash('success', `Hash: ${result.hash}`);
+      return res.redirect('resultados/new');
+    } else {
+      req.flash('error', result.message)
+      res.locals.message = req.flash()
+      return res.render('resultados/new', {
+        error: result.message
+      })
+    }
   },
 
   async createSTR(req, res) {
