@@ -2,7 +2,8 @@
 //   name:string} //Snip o STR
 
 module.exports = class System {
-  constructor(name) {
-    this.name = name
+  constructor(id, name) {
+    this.id = id;
+    this.name = name;
   }
 }
