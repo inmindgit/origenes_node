@@ -1,5 +1,6 @@
 // contract.methods -> use a specific contract methods.
 
+// const CONTRACT_ADDRESS = "ct_Ab994R6neSKnUCq3zXntnsGWXYkH545iH4F9uY7FWM1FXwFGQ";
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
 
 const fs = require("fs");

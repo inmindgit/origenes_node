@@ -1,5 +1,7 @@
 var createError = require('http-errors');
 var express = require('express');
+const session = require('express-session');
+const flash = require('connect-flash');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -9,8 +11,15 @@ var indexRouter = require('./src/routes/index');
 var usersRouter = require('./src/routes/users');
 var muestrasRouter = require('./src/routes/muestras');
 var resultadosRouter = require('./src/routes/resultados');
-
 var app = express();
+
+app.use(session({
+  secret: 'origenes',
+  saveUninitialized: true,
+  resave: true
+}));
+
+app.use(flash());
 
 // view engine setup
 app.set('views', path.join(__dirname, './src/views'));
