@@ -7,8 +7,13 @@ const passport = require('passport');
 router.get('/signIn', usersController.new);
 
 router.post('/signIn', passport.authenticate('login', {
-  successRedirect: '/muestras/new',
-  failureRedirect: '/'
+  successRedirect: '/',
+  failureRedirect: '/users/signIn'
 }));
+
+router.get('/signOut', function(req, res) {
+  req.logout();
+  res.redirect('/')
+})
 
 module.exports = router;
