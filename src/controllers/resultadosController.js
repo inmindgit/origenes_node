@@ -23,6 +23,16 @@ module.exports = {
     );
 
     // redireccionar al usuario al lugar apropiado si esta todo OK, caso contrario mostrar errores.
+    if(result.success) {
+      req.flash('success', `Hash: ${result.hash}`);
+      return res.redirect('resultados/new');
+    } else {
+      req.flash('error', result.message)
+      res.locals.message = req.flash()
+      return res.render('resultados/new', {
+        error: result.message
+      })
+    }
   },
 
   async createSTR(req, res) {
