@@ -45,6 +45,16 @@ addHuman = async () => {
   }
 };
 
+userRegistration = async () => {
+  const keypair = JSON.parse(process.env.ADMINN_KEYPAIR)
+  const contract = await getContract(keypair)
+  const result = await contract.methods.user_registration();
+  
+  console.log(result);
+}
+
 
 // poner acá la función para probar
-addHuman()
+// addHuman()
+
+userRegistration();
