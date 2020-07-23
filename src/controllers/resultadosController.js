@@ -5,7 +5,8 @@ module.exports = {
   async newResultado(req, res) {
     res.locals.message = req.flash()
     return res.render('resultados/new', {
-      title: 'Carga de resultados'
+      title: 'Carga de resultados',
+      currentUser: req.user
     })
   },
 
@@ -32,7 +33,8 @@ module.exports = {
       req.flash('error', result.message)
       res.locals.message = req.flash()
       return res.render('/resultados/new', {
-        error: result.message
+        error: result.message,
+        currentUser: req.user
       })
     }
   },
@@ -65,7 +67,8 @@ module.exports = {
       req.flash('error', result.message)
       res.locals.message = req.flash()
       return res.render('/resultados/new', {
-        error: result.message
+        error: result.message,
+        currentUser: req.user
       })
     }
   }

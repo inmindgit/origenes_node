@@ -13,7 +13,8 @@ module.exports = {
     // este numero debera ser devuelto en el formulario para ser enviado a BC en accion `create`
     return res.render('muestras/new', {
       title: 'Cargar nueva muestra',
-      number
+      number,
+      currentUser: req.user
     });
   },
 
@@ -44,7 +45,8 @@ module.exports = {
         res.locals.message = req.flash()
         return res.render('muestras/new', {
           error: result.message,
-          number: caseNumber
+          number: caseNumber,
+          currentUser: req.user
         })
       }
     } catch(e) {

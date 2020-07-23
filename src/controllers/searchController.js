@@ -8,7 +8,8 @@ module.exports = {
     // const muestras = await BCService.findMuestrasWhere(number: number);
     
     return res.render('coincidencias/search', {
-      title: 'Buscar coincidencias'
+      title: 'Buscar coincidencias',
+      currentUser: req.user
     });
   }
 }
