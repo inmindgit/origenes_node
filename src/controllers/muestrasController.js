@@ -1,6 +1,4 @@
 const numberGeneratorService = require('../services/numberGeneratorService');
-const fs = require('fs');
-const path = require('path');
 const addPersonService = require('../services/addPersonService');
 const PersonalData = require('../models/PersonalData');
 
