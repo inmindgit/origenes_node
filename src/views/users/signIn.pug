@@ -1,0 +1,33 @@
+extends ../layout
+
+block content
+  .row
+    .col-8
+    .col-4
+      .login-box
+        .card
+          .card-body.login-card-body
+            p.login-box-msg Iniciar Sesión
+            form(action='/users/signIn' method='post')
+              .input-group.mb-3
+                input.form-control(type='text' name="username" placeholder='Usuario')
+                .input-group-append
+                  .input-group-text
+                    span.fas.fa-user
+              .input-group.mb-3
+                input.form-control(type='password' name="password" placeholder='Contraseña')
+                .input-group-append
+                  .input-group-text
+                    span.fas.fa-lock
+              .row
+                .col-8
+                  .icheck-primary
+                    input#remember(type='checkbox')
+                    label.ml-2.text-muted(for='remember')
+                      | Recuérdame
+                // /.col
+                .col-4
+                  button.btn.btn-primary.btn-block(type='submit') Entrar
+                // /.col
+            p.mb-1
+              a(href='forgot-password.html') Olvidé mi contraseña

@@ -13,11 +13,12 @@ html
     link(rel='stylesheet', href='/vendor/admin-lte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css')
     link(rel='stylesheet', href='/vendor/admin-lte/plugins/daterangepicker/daterangepicker.css')
     link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700")
-  body.layout-top-nav
-    div(class="wrapper")
-      include shared/navbar.pug
-      div(class="content-wrapper")
-        block content
+    script(src="/vendor/localforage/dist/localforage.js")
+  body.layout-top-nav.hold-transition.login-page
+    block content
+    //- div(class="wrapper")
+    //-   include shared/navbar.pug
+    //-   div(class="content-wrapper")
     //- else
     //-   div(class="login-box")
     //-     div(class="login-logo")
