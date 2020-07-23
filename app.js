@@ -7,6 +7,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser')
 var passport = require('passport');
+require('./src/services/passport/login');
+require('./src/services/passport/session');
 var indexRouter = require('./src/routes/index');
 var usersRouter = require('./src/routes/users');
 var muestrasRouter = require('./src/routes/muestras');
@@ -19,7 +21,7 @@ app.use(session({
   resave: true
 }));
 app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.session({ cookie: { maxAge: 60000 } }));
 
 app.use(flash());
 
