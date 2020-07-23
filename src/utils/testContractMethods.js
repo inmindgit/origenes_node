@@ -47,7 +47,7 @@ addHuman = async () => {
 };
 
 userRegistration = async () => {
-  const keypair = JSON.parse(process.env.ADMINN_KEYPAIR)
+  const keypair = JSON.parse(process.env.ADMIN_KEYPAIR)
   const contract = await getContract(keypair)
   const result = await contract.methods.user_registration();
   
@@ -68,5 +68,5 @@ decrypt = async () => {
 
 // poner acá la función para probar
 // addHuman()
-// userRegistration();
-decrypt();
+userRegistration();
+// decrypt();
