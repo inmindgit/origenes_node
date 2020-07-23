@@ -2,6 +2,7 @@
 // node /utils/testContractMethods.js
 
 const { getContract } = require("./getContract");
+const { encryptString, decryptString } = require("../services/cryptoService");
 
 //  definición de funciones
 addHuman = async () => {
@@ -53,8 +54,19 @@ userRegistration = async () => {
   console.log(result);
 }
 
+encrypt = async () => {
+  const string = await encryptString('mi string');
+  console.log(string)
+}
+
+decrypt = async () => {
+  const string = await encryptString('mi string');
+  const result = await decryptString(string);
+  console.log(result)
+}
+
 
 // poner acá la función para probar
 // addHuman()
-
-userRegistration();
+// userRegistration();
+decrypt();
