@@ -1,4 +1,5 @@
 const addSnpService = require("../services/addSnpService");
+const addStrService = require("../services/addStrService");
 
 module.exports = {
   async newResultado(req, res) {
@@ -37,17 +38,35 @@ module.exports = {
 
   async createSTR(req, res) {
     const {
-      number,
-      str
+      caseNumber,
     } = req.body;
+    const strObjects = [];
+    
+    for (i = 1; i < 21; i++) {
+      const marcador = req.body[`marcador[${i}][]`];
+      strObjects.push(marcador);
+    }
 
-    const obj = req.body;
-    console.log('PARAMETERSSSSS: ', obj['marcadores[0]']);
-    console.log('PARAMETERSSSSS: ', obj['marcadores[1]']);
-    console.log('PARAMETERSSSSS: ', obj['marcadores[2]']);
     // enviar los datos ingresados al BC
+    const keypair = JSON.parse(process.env.KEYPAIR);
+
+    const result = await addStrService.call(
+      keypair,
+      caseNumber,
+      strObjects
+    );
 
     // redireccionar al usuari al lugar apropiado si esta todo OK, caso contrario mostrar errores.
+    if(result.success) {
+      req.flash('success', `Hash: ${result.hash}`);
+      return res.redirect('resultados/new');
+    } else {
+      req.flash('error', result.message)
+      res.locals.message = req.flash()
+      return res.render('resultados/new', {
+        error: result.message
+      })
+    }
   }
 }
 
