@@ -11,4 +11,10 @@ router.get('/search', authSession.checkSession, authorizationService.authorize, 
 
 router.post('/create', authSession.checkSession, authorizationService.authorize, muestrasController.create);
 
+router.get('/new', muestrasController.new);
+router.post('/create', muestrasController.create);
+
+router.get('/find', searchController.find);
+router.get('/search', searchController.search);
+
 module.exports = router;

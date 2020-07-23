@@ -1,23 +1,18 @@
 const { getContract } = require("../utils/getContract");
 
 module.exports = {
-  async call(keypair, caseNumber) {
+  async call(keypair, documentID) {
     try {
-      const keypair = JSON.parse(process.env.KEYPAIR);
       const contract = await getContract(keypair);
+
+      const result = await contract.methods.ask_for_sample_dna_test(documentID);
       
-      // TODO add method.
-      // const result = await contract.methods.add_dna_sample(
-      //   dnaSample,
-      //   caseNumber
-      // );
-      
-      console.log(result);
-      
+      console.log(result.decodedResult);
+
       return {
         success: true,
         message: '',
-        hash: result.hash
+        hash: result.decodedResult
       }
     } catch(e){
       console.log(e)

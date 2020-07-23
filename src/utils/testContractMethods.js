@@ -3,6 +3,7 @@
 
 const { getContract } = require("./getContract");
 const { encryptString, decryptString } = require("../services/cryptoService");
+const findMatchesService = require("../services/findMatchesService");
 
 //  definición de funciones
 addHuman = async () => {
@@ -65,8 +66,16 @@ decrypt = async () => {
   console.log(result)
 }
 
+search = async () => {
+  const result = await findMatchesService.call('asd', '123qwe')
+  
+  console.log(result)
+}
 
 // poner acá la función para probar
 // addHuman()
-userRegistration();
+// userRegistration();
 // decrypt();
+
+search();
+
