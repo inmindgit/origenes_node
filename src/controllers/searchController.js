@@ -1,12 +1,15 @@
+const findMatchesService = require("../services/findMatchesService");
+
 module.exports = {
   async searchCoincidencia(req, res) {
-    const { 
-      number
+    const {
+      numberCase
     } = req.body;
 
-    // enviar el numero al BC para encontrar coincidencias
-    // const muestras = await BCService.findMuestrasWhere(number: number);
-    
+    // const keypair = JSON.parse(process.env.KEYPAIR);
+
+    // const result = await findMatchesService.call();
+
     return res.render('coincidencias/search', {
       title: 'Buscar coincidencias',
       currentUser: req.user

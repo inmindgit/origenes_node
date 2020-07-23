@@ -14,9 +14,9 @@ block content
               .card-body
                 .row.justify-content-md-center
                   .col-md-6
-                    .form-inline
+                    form(action="/muestras/search", method="get", class="col-12")
                       .input-group.input-group-lg
-                        input(type="text" id="inputNombre" class="form-control form-control-lg" placeholder="Ingrese el número de actuación para buscar coincidencia")
+                        input(type="text" name="numberCase" class="form-control form-control-lg" placeholder="Ingrese el número de actuación para buscar coincidencia")
                         span.input-group-append
                           button.btn.btn-default
                             i.fas.fa-search.fa-fw
