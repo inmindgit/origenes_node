@@ -3,6 +3,7 @@ const addStrService = require("../services/addStrService");
 
 module.exports = {
   async newResultado(req, res) {
+    res.locals.message = req.flash()
     return res.render('resultados/new', {
       title: 'Carga de resultados'
     })
@@ -26,11 +27,11 @@ module.exports = {
     // redireccionar al usuario al lugar apropiado si esta todo OK, caso contrario mostrar errores.
     if(result.success) {
       req.flash('success', `Hash: ${result.hash}`);
-      return res.redirect('resultados/new');
+      return res.redirect('/resultados/new');
     } else {
       req.flash('error', result.message)
       res.locals.message = req.flash()
-      return res.render('resultados/new', {
+      return res.render('/resultados/new', {
         error: result.message
       })
     }
@@ -59,11 +60,11 @@ module.exports = {
     // redireccionar al usuari al lugar apropiado si esta todo OK, caso contrario mostrar errores.
     if(result.success) {
       req.flash('success', `Hash: ${result.hash}`);
-      return res.redirect('resultados/new');
+      return res.redirect('/resultados/new');
     } else {
       req.flash('error', result.message)
       res.locals.message = req.flash()
-      return res.render('resultados/new', {
+      return res.render('/resultados/new', {
         error: result.message
       })
     }
