@@ -4,7 +4,7 @@
 //   snp_result:list(string),
 //   str_result:list(sTRIndicator)}
 
-module.exports = class dnaAnalysis {
+module.exports = class DnaAnalysis {
   constructor(doneDate, caseNumber, snpResult, strResult) {
     this.doneDate = doneDate;
     this.case_number = caseNumber;
