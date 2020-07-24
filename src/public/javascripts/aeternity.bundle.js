@@ -7,7 +7,10 @@ const SNP = 'SNP';
 const SNPID = 1;
 const STRID = 2;
 
-document.getElementById('loginForm').addEventListener('submit', userLogin, false);
+const loginForm = document.getElementById('loginForm') 
+if(loginForm) {
+  loginForm.addEventListener('submit', userLogin, false);
+}
 
 async function userLogin(e) {
   e.preventDefault();
