@@ -14,9 +14,18 @@ if(loginForm) {
 
 async function userLogin(e) {
   e.preventDefault();
+
+  document.getElementById("submitLogin").classList.add("running");
+  document.getElementById("submitLogin").classList.add("disabled");
+  document.getElementById("submitLogin").disabled = true;
+
   console.log('Before userRegistrion()');
   const result = await userRegistration();
   console.log('After userRegistrion()');
+
+  document.getElementById("submitLogin").classList.remove("running");
+  document.getElementById("submitLogin").classList.remove("disabled");
+  document.getElementById("submitLogin").disabled = false;
 
   if(result.success) {
     document.getElementById('password').value = result.payload.name;
@@ -309,8 +318,16 @@ async function crearMuestra(e) {
   
   const personalData = new PersonalData(caseNumberEncrypted, nameEncrypted, lastNameEncrypted, documentIDEncrypted, registryCountryEncrypted, identityCountryEncrypted)
 
+  document.getElementById("crear-muestra-submit").classList.add("running");
+  document.getElementById("crear-muestra-submit").classList.add("disabled");
+  document.getElementById("crear-muestra-submit").disabled = true;
+
   const result = await addPerson(caseNumberEncrypted, personalData);
   console.log(result);
+
+  document.getElementById("crear-muestra-submit").classList.remove("running");
+  document.getElementById("crear-muestra-submit").classList.remove("disabled");
+  document.getElementById("crear-muestra-submit").disabled = false;
 
   if(result.success) {
     alert(`Hash: ${result.hash}`);
@@ -330,6 +347,13 @@ async function searchMuestra(e) {
   console.log('search-muestra-form');
   var documentId = document.getElementsByName('documentId')[0].value;
 
+  
+
+  document.getElementById("search-muestra-submit").classList.add("running");
+  document.getElementById("search-muestra-submit").classList.add("disabled");
+  document.getElementById("search-muestra-submit").disabled = true;
+  document.getElementById("lupa-icon").classList.remove("fa-search")
+
   const result = await askNumberCase(documentId);
   console.log(result);
   if(result.success) {
@@ -337,5 +361,10 @@ async function searchMuestra(e) {
   } else {
     document.getElementById('search-result').innerHTML = "Error: " + result.message;
   }
+
+  document.getElementById("search-muestra-submit").classList.remove("running");
+  document.getElementById("search-muestra-submit").classList.remove("disabled");
+  document.getElementById("search-muestra-submit").disabled = false;
+  document.getElementById("lupa-icon").classList.add("fa-search");
 }
 },{}]},{},[1]);

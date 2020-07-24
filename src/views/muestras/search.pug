@@ -12,19 +12,24 @@ block content
           .col-lg-12
             .card.py-2
               .card-body
-                .row.justify-content-md-center
+                .row
                   .col-md-6
-                    form(action="/muestras/search", method="get", class="col-12" id="search-muestra-form")
-                      .input-group.input-group-lg
-                        input(type="text" name="documentId" class="form-control form-control-lg" placeholder="Ingrese el número de identificación")
-                        span.input-group-append
-                          button.btn.btn-default
-                            i.fas.fa-search.fa-fw
-        .row
-          .col-lg-12
-            .card.py-2
-              .card-header
-                h3(id="search-result")
+                    .row
+                      form(action="/muestras/search", method="get", class="col-12" id="search-muestra-form")
+                        .input-group.input-group-lg
+                          input(type="text" name="documentId" class="form-control form-control-lg" placeholder="Ingrese el número de identificación")
+                          span.input-group-append
+                            button.btn.btn-default.ld-over(id="search-muestra-submit")
+                              i.fas.fa-search.fa-fw(id="lupa-icon")
+                              .ld.ld-ring.ld-spin
+                  .col-md-6
+                    span.card-title.align-middle(id="search-result")
+
+        //- .row
+        //-   .col-lg-12
+        //-     .card.py-2
+        //-       .card-header
+                
         //-         h3.card-title Resultados Obtenidos
         //-       .card-body.table-responsive.p-0
         //-         table.table.table-hover.text-nowrap
