@@ -15,7 +15,7 @@ module.exports = {
     const {
       caseNumber
     } = req.body;
-    marcadores = req.body['marcadores[]'];
+    const marcadores = req.body['marcadores[]'];
 
     const keypair = JSON.parse(process.env.KEYPAIR);
 
