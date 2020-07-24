@@ -9,8 +9,8 @@ module.exports = {
     });
   },
 
+  // SNP
   async snp(req, res) {
-    // definir el nombre de los marcadores SNP (150 marcadores con diferentes valores posibles)
     const {
       caseNumber
     } = req.body;
@@ -37,7 +37,8 @@ module.exports = {
       })
     }
   },
-
+  
+  // STR
   async str(req, res) {
     const {
       caseNumber,
