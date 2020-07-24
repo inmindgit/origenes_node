@@ -1,16 +1,14 @@
-const addSnpService = require("../services/addSnpService");
-const addStrService = require("../services/addStrService");
+const matchStrService = require("../services/matchStrService");
+const matchSnpService = require("../services/matchSnpService");
 
 module.exports = {
-  async newResultado(req, res) {
-    res.locals.message = req.flash()
-    return res.render('resultados/new', {
-      title: 'Carga de resultados',
-      currentUser: req.user
-    })
+  async find(req, res) {
+    return res.render('coincidencias/find', {
+      title: 'Buscar muestras'
+    });
   },
 
-  async createSNP(req, res) {
+  async snp(req, res) {
     // definir el nombre de los marcadores SNP (150 marcadores con diferentes valores posibles)
     const {
       caseNumber
@@ -19,7 +17,7 @@ module.exports = {
 
     const keypair = JSON.parse(process.env.KEYPAIR);
 
-    const result = await addSnpService.call(
+    const result = await matchSnpService.call(
       keypair,
       caseNumber,
       marcadores
@@ -28,18 +26,17 @@ module.exports = {
     // redireccionar al usuario al lugar apropiado si esta todo OK, caso contrario mostrar errores.
     if(result.success) {
       req.flash('success', `Hash: ${result.hash}`);
-      return res.redirect('/resultados/new');
+      return res.redirect('/coincidencias/find');
     } else {
       req.flash('error', result.message)
       res.locals.message = req.flash()
-      return res.render('/resultados/new', {
-        error: result.message,
-        currentUser: req.user
+      return res.render('coincidencias/find', {
+        error: result.message
       })
     }
   },
 
-  async createSTR(req, res) {
+  async str(req, res) {
     const {
       caseNumber,
     } = req.body;
@@ -53,7 +50,7 @@ module.exports = {
     // enviar los datos ingresados al BC
     const keypair = JSON.parse(process.env.KEYPAIR);
 
-    const result = await addStrService.call(
+    const result = await matchStrService.call(
       keypair,
       caseNumber,
       strObjects
@@ -62,38 +59,13 @@ module.exports = {
     // redireccionar al usuari al lugar apropiado si esta todo OK, caso contrario mostrar errores.
     if(result.success) {
       req.flash('success', `Hash: ${result.hash}`);
-      return res.redirect('/resultados/new');
+      return res.redirect('/coincidencias/find');
     } else {
       req.flash('error', result.message)
       res.locals.message = req.flash()
-      return res.render('/resultados/new', {
-        error: result.message,
-        currentUser: req.user
+      return res.render('coincidencias/find', {
+        error: result.message
       })
     }
   }
 }
-
-// D3S1358 = {
-//   '0': 0000,
-//   '1': 1111
-// }
-// THO1
-// D21S11
-// D18S51
-// PENTAE
-// D5S818
-// D13S317
-// D7S820
-// D16S539
-// CSF1PO
-// PENTAD
-// vWA
-// D8S1179
-// TPOX
-// FGA
-// D19S433
-// D1S1656
-// D12S391
-// D2S1338
-// AMEL

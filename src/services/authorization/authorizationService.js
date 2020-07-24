@@ -1,6 +1,6 @@
-const OPERATOR_ROUTES = ['/muestras/new', '/muestras/create', '/muestras/search'];
+const OPERATOR_ROUTES = ['/muestras/new', '/muestras/create', '/muestras/search', '/find'];
 const LAB_ROUTES = ['/resultados/new', '/resultados/createSNP', '/resultados/createSTR']
-const VIEWER_ROUTES = ['/muestras/search']
+const VIEWER_ROUTES = ['/coincidencias/find', '/coincidencias/search']
 
 function validator(availableRoutesArray, reqOriginalUrl, res, next) {
   if(availableRoutesArray.includes(reqOriginalUrl)) {

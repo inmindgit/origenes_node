@@ -1,6 +1,7 @@
 const numberGeneratorService = require('../services/numberGeneratorService');
 const addPersonService = require('../services/addPersonService');
 const PersonalData = require('../models/PersonalData');
+const cryptoService = require('../services/cryptoService');
 
 module.exports = {
   async new(req, res){
@@ -30,8 +31,15 @@ module.exports = {
         registryCountry,
         laboratoryOfOrigin
       } = req.body;
-  
-      const personalData = new PersonalData(caseNumber, name, lastName, documentID, registryCountry, identityCountry)
+
+      const caseNumberEncrypted = cryptoService.encryptString(caseNumber)
+      const nameEncrypted = cryptoService.encryptString(name)
+      const lastNameEncrypted = cryptoService.encryptString(lastName)
+      const documentIDEncrypted = cryptoService.encryptString(documentID)
+      const registryCountryEncrypted = cryptoService.encryptString(registryCountry)
+      const identityCountryEncrypted = cryptoService.encryptString(identityCountry)
+
+      const personalData = new PersonalData(caseNumberEncrypted, nameEncrypted, lastNameEncrypted, documentIDEncrypted, registryCountryEncrypted, identityCountryEncrypted)
       
       let result = await addPersonService.call(keypair, caseNumber, personalData)
 
@@ -48,7 +56,7 @@ module.exports = {
         })
       }
     } catch(e) {
-      console.log(e.decodedError);
+      console.log(e);
     }
     
     // aqui redireccionar la request a donde haga falta
