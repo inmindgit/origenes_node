@@ -1,4 +1,4 @@
-const OPERATOR_ROUTES = ['/muestras/new', '/muestras/create', '/muestras/search', '/find'];
+const OPERATOR_ROUTES = ['/muestras/new', '/muestras/create', '/muestras/search', '/muestras/find'];
 const LAB_ROUTES = ['/resultados/new', '/resultados/createSNP', '/resultados/createSTR']
 const VIEWER_ROUTES = ['/coincidencias/find', '/coincidencias/search']
 
@@ -12,9 +12,7 @@ function validator(availableRoutesArray, reqOriginalUrl, res, next) {
 
 module.exports = {
   authorize(req, res, next) {
-    console.log('Request: >>>>>>>> ', req);
-    console.log('profile: >>>>>>>> ', req.user);
-    switch (req.user.name) {
+    switch (req.user.role) {
       case 'Admin':
         return next();
       case 'Operator':
