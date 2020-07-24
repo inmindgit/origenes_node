@@ -32,15 +32,15 @@ block content
           .col-lg-12
             .tab-content(id="custom-tabs-form-tabContent")
               .tab-pane.fade(id="custom-tabs-snp" role="tabpanel")
-                form(action="/resultados/createSNP", method="post", class="col-12")
+                form(action="/resultados/createSNP", method="post", class="col-12", id="snipForm")
                   .card
                     .card-body
                       include snip.pug
                     .card-footer
                       button(type="submit" class="btn btn-primary float-right") Enviar
-                      button(type="submit" class="btn btn-default") Cancelar
+                      a(href="/" class="btn btn-default") Cancelar
               .tab-pane.fade.active.show(id="custom-tabs-str" role="tabpanel")
-                form(action="/resultados/createSTR", method="post", class="col-12")
+                form(action="/resultados/createSTR", method="post", class="col-12" id="add-srt-result-form")
                   .card
                     .card-body
                       .row

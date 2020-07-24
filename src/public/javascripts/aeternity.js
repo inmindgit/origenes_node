@@ -3,11 +3,36 @@ const NODE_URL = 'https://testnet.aeternity.io';
 const COMPILER_URL = 'https://compiler.aeternity.io';
 const CONTRACT_ADDRESS = 'ct_p7pGeJqmAg4pf8A2Msz96VRwNvgQGbTDoNZ8PH1F1cH4izPxk';
 const SNP = 'SNP';
+const STR = 'STR';
 const SNPID = 1;
 const STRID = 2;
 
-const loginForm = document.getElementById('loginForm') 
-if(loginForm) {
+const snipForm = document.getElementById('snipForm')
+if (snipForm) {
+  snipForm.addEventListener('submit', resultadosSnip, false);
+}
+
+async function resultadosSnip(e) {
+  e.preventDefault();
+  const caseNumber = document.getElementsByName('caseNumber')[0].value;
+  let array = [];
+  
+  document.getElementsByName('marcadores[]').forEach((e) => {
+    array.push(e.value);
+  });
+
+  let result = await addSnp(caseNumber, array);
+
+  if(result.success) {
+    alert(`Hash: ${result.hash}`)
+    window.location.href = '/resultados/new'; // after clicking the alert, redirect to the empty form
+  } else {
+    alert(`Error: ${result.message}`)
+  }
+}
+
+const loginForm = document.getElementById('loginForm') ;
+if(loginForm !== null) {
   loginForm.addEventListener('submit', userLogin, false);
 }
 
@@ -184,15 +209,15 @@ async function addStr(caseNumber, strArray) {
     const strArrayObjects = strArray.map((e) => {
       return {
         name: e[0],
-        value1: e[1],
-        value2: e[2]
+        value1: parseInt(e[1]),
+        value2: parseInt(e[2])
       }
     });
 
     const dnaSample = {
       system: {
         id: STRID,
-        name: SNP
+        name: STR
       },
       analysis: {
         doneDate: new Date().toISOString(),
@@ -222,13 +247,14 @@ async function addStr(caseNumber, strArray) {
 
 async function addSnp(caseNumber, snpArray) {
   try {
+    const date = new Date().toISOString();
     const dnaSample = {
       system: {
         id: SNPID,
         name: SNP
       },
       analysis: {
-        doneDate: new Date().toISOString(),
+        doneDate: date,
         case_number: caseNumber,
         snp_result: snpArray,
         str_result: []
@@ -365,4 +391,32 @@ async function searchMuestra(e) {
   document.getElementById("search-muestra-submit").classList.remove("disabled");
   document.getElementById("search-muestra-submit").disabled = false;
   document.getElementById("lupa-icon").classList.add("fa-search");
+}
+
+let addSTRResultForm = document.getElementById('add-srt-result-form');
+if(addSTRResultForm != null) {
+  addSTRResultForm.addEventListener('submit', addSrtResult, false);
+}
+
+async function addSrtResult(e){
+  e.preventDefault();
+  
+  const caseNumber = document.getElementById('caseNumber').value;
+  const strObjects = [];
+    
+  for (i = 1; i < 21; i++) {
+    const marcador = document.getElementsByName(`marcador[${i}][]`)
+    marcadorArr = [] 
+    marcador.forEach( (e) => marcadorArr.push(e.value) )
+    strObjects.push(marcadorArr);
+  }
+
+  const result = await addStr(caseNumber, strObjects);
+
+  if(result.success) {
+    alert(`Hash: ${result.hash}`);
+    window.location.href = '/resultados/new'; // after clicking the alert, redirect to the empty form
+  } else {
+    alert(`Error: ${result.message}`);
+  }
 }
