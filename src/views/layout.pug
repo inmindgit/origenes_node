@@ -15,8 +15,6 @@ html
     link(rel='stylesheet', href='/vendor/admin-lte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css')
     link(rel='stylesheet', href='/vendor/admin-lte/plugins/daterangepicker/daterangepicker.css')
     link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700")
-    script(src="/vendor/localforage/dist/localforage.js")
-  
   body(class={"layout-top-nav hold-transition": currentUser, "hold-transition login-page": !currentUser })
     if currentUser
       div(class="wrapper")
@@ -36,3 +34,6 @@ html
     script(src="/vendor/admin-lte/plugins/moment/moment.min.js")
     script(src="/vendor/admin-lte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js")
     script(src="/vendor/admin-lte/dist/js/adminlte.js")
+    script(src="/vendor/localforage/dist/localforage.js")
+    script(src="https://unpkg.com/@aeternity/aepp-sdk/dist/aepp-sdk.browser-script.js")
+    script(src="/javascripts/aeternityClient.js")
