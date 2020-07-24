@@ -3,6 +3,7 @@ const NODE_URL = 'https://testnet.aeternity.io';
 const COMPILER_URL = 'https://compiler.aeternity.io';
 const CONTRACT_ADDRESS = 'ct_p7pGeJqmAg4pf8A2Msz96VRwNvgQGbTDoNZ8PH1F1cH4izPxk';
 const SNP = 'SNP';
+const STR = 'STR';
 const SNPID = 1;
 const STRID = 2;
 
@@ -199,15 +200,15 @@ async function addStr(caseNumber, strArray) {
     const strArrayObjects = strArray.map((e) => {
       return {
         name: e[0],
-        value1: e[1],
-        value2: e[2]
+        value1: parseInt(e[1]),
+        value2: parseInt(e[2])
       }
     });
 
     const dnaSample = {
       system: {
         id: STRID,
-        name: SNP
+        name: STR
       },
       analysis: {
         doneDate: new Date().toISOString(),
@@ -339,6 +340,35 @@ async function crearMuestra(e) {
   if(result.success) {
     alert(`Hash: ${result.hash}`);
     window.location.href =  '/muestras/new'; // after clicking the alert, redirect to the empty form
+  } else {
+    alert(`Error: ${result.message}`);
+  }
+}
+
+
+let addSTRResultForm = document.getElementById('add-srt-result-form');
+if(addSTRResultForm != null) {
+  addSTRResultForm.addEventListener('submit', addSrtResult, false);
+}
+
+async function addSrtResult(e){
+  e.preventDefault();
+  
+  const caseNumber = document.getElementById('caseNumber').value;
+  const strObjects = [];
+    
+  for (i = 1; i < 21; i++) {
+    const marcador = document.getElementsByName(`marcador[${i}][]`)
+    marcadorArr = [] 
+    marcador.forEach( (e) => marcadorArr.push(e.value) )
+    strObjects.push(marcadorArr);
+  }
+
+  const result = await addStr(caseNumber, strObjects);
+
+  if(result.success) {
+    alert(`Hash: ${result.hash}`);
+    window.location.href = '/resultados/new'; // after clicking the alert, redirect to the empty form
   } else {
     alert(`Error: ${result.message}`);
   }
