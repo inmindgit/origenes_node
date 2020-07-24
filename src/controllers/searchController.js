@@ -3,7 +3,8 @@ const askNumberCase = require("../services/askNumberCase");
 module.exports = {
   async find(req, res) {
     return res.render('muestras/search', {
-      title: 'Buscar muestras'
+      title: 'Buscar muestras',
+      currentUser: req.user
     });
   },
 
@@ -18,11 +19,13 @@ module.exports = {
 
     if(result.success) {
       return res.render('muestras/search', {
-        numberCaseResult: result.hash
+        numberCaseResult: result.hash,
+        currentUser: req.user
       })
     } else {
-      return res.render('muestras/find', {
-        numberCaseResult: result.hash
+      return res.render('muestras/search', {
+        numberCaseResult: result.hash,
+        currentUser: req.user
       })
     }
   }

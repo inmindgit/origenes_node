@@ -30,9 +30,10 @@ module.exports = {
       req.flash('success', `Hash: ${result.hash}`);
       return res.redirect('/resultados/new');
     } else {
+      console.log('ERRRORRR')
       req.flash('error', result.message)
       res.locals.message = req.flash()
-      return res.render('/resultados/new', {
+      return res.render('resultados/new', {
         error: result.message,
         currentUser: req.user
       })
@@ -66,7 +67,7 @@ module.exports = {
     } else {
       req.flash('error', result.message)
       res.locals.message = req.flash()
-      return res.render('/resultados/new', {
+      return res.render('resultados/new', {
         error: result.message,
         currentUser: req.user
       })

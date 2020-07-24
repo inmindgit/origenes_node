@@ -1,12 +1,19 @@
 extends ../layout
 
 block content
-  .text-center
-    if (currentUser.role === 'Admin' || currentUser.role === 'Operator')
-      a(href="/muestras/new" class="btn btn-lg btn-primary mt-3") Muestras
-    br
-    if (currentUser.role === 'Admin' || currentUser.role === 'Lab')
-      a(href="/resultados/new" class="btn btn-lg btn-primary mt-3") Resultados
-    br
-    if (currentUser.role === 'Admin' || currentUser.role === 'Viewer' || currentUser.role === 'Operator')
-      a(href="/muestras/search" class="btn btn-lg btn-primary mt-3") Búsqueda de coincidencias
+  div.content-header
+    div.container
+      .content
+        .row
+          .col-lg-12
+            .text-center
+              if (currentUser.role === 'Admin' || currentUser.role === 'Operator')
+                a(href="/muestras/new" class="btn btn-lg btn-primary btn-block mt-3") Agregar muestra
+                br
+                a(href="/muestras/find" class="btn btn-lg btn-primary btn-block mt-3") Buscar muestra
+              br
+              if (currentUser.role === 'Admin' || currentUser.role === 'Lab')
+                a(href="/resultados/new" class="btn btn-lg btn-primary btn-block mt-3") Agregar resultados de muestras
+              br
+              if (currentUser.role === 'Admin' || currentUser.role === 'Viewer' || currentUser.role === 'Operator')
+                a(href="/coincidencias/find" class="btn btn-lg btn-primary btn-block mt-3") Búsqueda de coincidencias
