@@ -7,10 +7,10 @@ block content
         .row
           .col-lg-12
             .text-center
-              if (currentUser.role === 'Admin' || currentUser.role === 'Operator')
-                a(href="/muestras/new" class="btn btn-lg btn-primary btn-block mt-3") Agregar muestra
+              if (currentUser.name === 'Admin' || currentUser.name === 'Operator')
+                a(href="/muestras/new" class="btn btn-lg btn-primary btn-block mt-3") Agregar persona
                 br
-                a(href="/muestras/find" class="btn btn-lg btn-primary btn-block mt-3") Buscar muestra
+                a(href="/muestras/find" class="btn btn-lg btn-primary btn-block mt-3") Solicitar muestra
               br
               if (currentUser.role === 'Admin' || currentUser.role === 'Lab')
                 a(href="/resultados/new" class="btn btn-lg btn-primary btn-block mt-3") Agregar resultados de muestras

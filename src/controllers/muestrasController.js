@@ -11,7 +11,7 @@ module.exports = {
     // este numero no podra ser modificado en la UI.
     // este numero debera ser devuelto en el formulario para ser enviado a BC en accion `create`
     return res.render('muestras/new', {
-      title: 'Cargar nueva muestra',
+      title: 'Agregar nueva persona',
       number,
       currentUser: req.user
     });
