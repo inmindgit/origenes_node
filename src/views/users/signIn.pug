@@ -8,14 +8,14 @@ block content
         .card
           .card-body.login-card-body
             p.login-box-msg Iniciar Sesión
-            form(action='/users/signIn' method='post')
+            form(action='/users/signIn' method='post' id="loginForm")
               .input-group.mb-3
-                input.form-control(type='text' name="username" placeholder='Usuario')
+                input.form-control(type='text' name="username" placeholder='Usuario' id="username")
                 .input-group-append
                   .input-group-text
                     span.fas.fa-user
               .input-group.mb-3
-                input.form-control(type='password' name="password" placeholder='Contraseña')
+                input.form-control(type='password' name="password" id="password" placeholder='Contraseña')
                 .input-group-append
                   .input-group-text
                     span.fas.fa-lock
@@ -27,7 +27,7 @@ block content
                       | Recuérdame
                 // /.col
                 .col-4
-                  button.btn.btn-primary.btn-block(type='submit') Entrar
+                  button.btn.btn-primary.btn-block(id="submitLogin" type='submit') Entrar
                 // /.col
             p.mb-1
               a(href='forgot-password.html') Olvidé mi contraseña

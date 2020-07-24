@@ -12,9 +12,7 @@ function validator(availableRoutesArray, reqOriginalUrl, res, next) {
 
 module.exports = {
   authorize(req, res, next) {
-    console.log('Request: >>>>>>>> ', req);
-    console.log('profile: >>>>>>>> ', req.user);
-    switch (req.user.name) {
+    switch (req.user.role) {
       case 'Admin':
         return next();
       case 'Operator':

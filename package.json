@@ -9,6 +9,7 @@
   "dependencies": {
     "@aeternity/aepp-sdk": "^7.5.0",
     "admin-lte": "^3.0.5",
+    "brfs": "^2.0.2",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.5",
     "crypto-js": "^4.0.0",

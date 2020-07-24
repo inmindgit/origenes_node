@@ -7,13 +7,13 @@ block content
         .row
           .col-lg-12
             .text-center
-              if (currentUser.name === 'Admin' || currentUser.name === 'Operator')
+              if (currentUser.role === 'Admin' || currentUser.role === 'Operator')
                 a(href="/muestras/new" class="btn btn-lg btn-primary btn-block mt-3") Agregar muestra
                 br
                 a(href="/muestras/find" class="btn btn-lg btn-primary btn-block mt-3") Buscar muestra
               br
-              if (currentUser.name === 'Admin' || currentUser.name === 'Lab')
+              if (currentUser.role === 'Admin' || currentUser.role === 'Lab')
                 a(href="/resultados/new" class="btn btn-lg btn-primary btn-block mt-3") Agregar resultados de muestras
               br
-              if (currentUser.name === 'Admin' || currentUser.name === 'Viewer' || currentUser.name === 'Operator')
+              if (currentUser.role === 'Admin' || currentUser.role === 'Viewer' || currentUser.role === 'Operator')
                 a(href="/coincidencias/find" class="btn btn-lg btn-primary btn-block mt-3") Búsqueda de coincidencias
