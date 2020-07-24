@@ -1,4 +1,5 @@
 const askNumberCase = require("../services/askNumberCase");
+const cryptoService = require('../services/cryptoService');
 
 module.exports = {
   async find(req, res) {
@@ -15,6 +16,8 @@ module.exports = {
 
     const keypair = JSON.parse(process.env.KEYPAIR);
 
+    // const documentIDEncrypted = cryptoService.encryptString(documentId.toString());
+    
     const result = await askNumberCase.call(keypair, documentId.toString());
 
     if(result.success) {
