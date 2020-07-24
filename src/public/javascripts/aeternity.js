@@ -1,81 +1,250 @@
 const fs = require("fs");
+const { userRegistration } = require("../../services/authenticateUserService");
 const NODE_URL = 'https://testnet.aeternity.io';
 const COMPILER_URL = 'https://compiler.aeternity.io';
-// let KEYPAIR = JSON.parse('{"publicKey":"ak_xew1bEqH4f59jNdP9jwRmBfBWDa3uoWqMdcsoZ1F2ZkrtXTcB","secretKey":"54cbdf775706568d58705c574b358831e68be41eeb35304810e7b7b4033971897e5e82de52e7e296cba9cc4167bf4be210a6e5133e32ecb9cb12d45b50b44093"}')
 const CONTRACT_ADDRESS = 'ct_p7pGeJqmAg4pf8A2Msz96VRwNvgQGbTDoNZ8PH1F1cH4izPxk';
+const SNP = 'SNP';
+const SNPID = 1;
+const STRID = 2;
 
-async function test() {
-  if(!window.localStorage.getItem('keypair')){
-    return alert('No posee claves almacenadas');
-  }
-
-  const KEYPAIR = JSON.parse(window.localStorage.getItem('keypair'))
-
+async function aeternityClient(keypair) {
   try {
     const node = await Ae.Node({
       url: NODE_URL
     });
-    const aeInstance = await Ae.Universal({
+    const client = await Ae.Universal({
       compilerUrl: COMPILER_URL,
       nodes: [{
         name: 'test-net',
         instance: node
       }],
       accounts: [Ae.MemoryAccount({
-        keypair: KEYPAIR
+        keypair: keypair
       })]
     });
-    const height = await aeInstance.height();
-    
-    console.log(__dirname)
-    const contractSource = fs.readFileSync(__dirname + "/contract/FreedomOrigins.aes", "utf-8");
-    const contract = await aeInstance.getContractInstance( contractSource, { contractAddress: CONTRACT_ADDRESS });
 
-    console.log(contract.methods)
-
+    return client;
   } catch(e) {
     alert(e)
   }
 };
 
-test();
+async function getContract() {
+  try {
+    const keypair = await JSON.parse(window.localStorage.getItem('keypair'));
+    if(!keypair) {
+      throw Error('No posee keypair.');
+    }
 
+    const contractSource = fs.readFileSync(__dirname + "/contract/FreedomOrigins.aes", "utf-8");
+    const client = await aeternityClient(keypair);
+    const contract = await client.getContractInstance(contractSource, {
+      contractAddress: CONTRACT_ADDRESS
+    });
 
-// const contract = await client.getContractInstance(
-//   contractSource,
-//   {
-//     contractAddress: CONTRACT_ADDRESS
-//   }
-// );
+    return contract;
+  } catch(e) {
+    alert(e);
+  }
+}
 
-// const {
-//   Universal,
-//   MemoryAccount,
-//   Node
-// } = require('@aeternity/aepp-sdk');
+async function matchStr(caseNumber, strArray) {
+  try {
+    const strArrayObjects = strArray.map((e) => {
+      return {
+        name: e[0],
+        value1: e[1],
+        value2: e[2]
+      }
+    });
+    const dnaSample = {
+      system: {
+        id: STRID,
+        name: SNP
+      },
+      analysis: {
+        doneDate: new Date().toISOString(),
+        case_number: caseNumber,
+        snp_result: [],
+        str_result: strArrayObjects
+      }
+    };
 
-// module.exports.aeternityClient = async (keypair) => {
-//   try {
-//     const account = await MemoryAccount({
-//       keypair: keypair
-//     });
-//     const nodeInstance = await Node({
-//       url: NODE_URL
-//     })
+    const contract = await getContract();
+    const result = await contract.methods.add_dna_sample(dnaSample, caseNumber);
 
-//     const client = await Universal({
-//       compilerUrl: COMPILER_URL,
-//       accounts: [account],
-//       nodes: [{
-//         name: 'test-net',
-//         instance: nodeInstance
-//       }]
-//     })
+    return {
+      success: true,
+      message: '',
+      hash: result.hash
+    }
+  } catch (e) {
+    console.log(e.decodedError);
+    alert('Ocurrió un error: ', e.decodedError);
+    
+    return {
+      success: false,
+      message: e.decodedError,
+      hash: e.error
+    }
+  }
+}
 
-//     return client;
-//   } catch (err) {
-//     console.log({
-//       ErrorAEClient: err
-//     })
-//   }
-// }
+async function matchSnp(caseNumber, snpArray) {
+  try {
+    const dnaSample = {
+      system: {
+        id: SNPID,
+        name: SNP
+      },
+      analysis: {
+        doneDate: new Date().toISOString(),
+        case_number: caseNumber,
+        snp_result: snpArray,
+        str_result: []
+      }
+    };
+
+    const contract = await getContract();
+    const result = await contract.methods.look_for_match(dnaSample);
+
+  } catch (e) {
+    console.log(e)
+    alert(e.decodedError)
+  }
+}
+
+async function userRegistration() {
+  try {
+    const contract = await getContract();
+    const result = await contract.methods.user_registration();
+
+    return {
+      success: true,
+      payload: result.decodedResult.profile
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: 'Error'
+    }
+  }
+}
+
+async function askNumberCase(documentID) {
+  try {
+    const contract = await getContract();
+    const result = await contract.methods.ask_for_sample_dna_test(documentID);
+
+    return {
+      success: true,
+      message: '',
+      hash: result.decodedResult
+    }
+  } catch (e) {
+    console.log(e)
+    return {
+      success: false,
+      message: e.decodedError,
+      hash: e.error
+    }
+  }
+}
+
+async function addStr(caseNumber, strArray) {
+  try {
+    const strArrayObjects = strArray.map((e) => {
+      return {
+        name: e[0],
+        value1: e[1],
+        value2: e[2]
+      }
+    });
+
+    const dnaSample = {
+      system: {
+        id: STRID,
+        name: SNP
+      },
+      analysis: {
+        doneDate: new Date().toISOString(),
+        case_number: caseNumber,
+        snp_result: [],
+        str_result: strArrayObjects
+      }
+    }
+
+    const contract = await getContract();
+    const result = await contract.methods.add_dna_sample(dnaSample, caseNumber);
+
+    return {
+      success: true,
+      message: '',
+      hash: result.hash
+    }
+  } catch (e) {
+    console.log(e)
+    return {
+      success: false,
+      message: e.decodedError,
+      hash: e.error
+    }
+  }
+}
+
+async function addSnp(caseNumber, snpArray) {
+  try {
+    const dnaSample = {
+      system: {
+        id: SNPID,
+        name: SNP
+      },
+      analysis: {
+        doneDate: new Date().toISOString(),
+        case_number: caseNumber,
+        snp_result: snpArray,
+        str_result: []
+      }
+    };
+
+    const contract = await getContract()
+    const result = await contract.methods.add_dna_sample(dnaSample, caseNumber);
+
+    return {
+      success: true,
+      message: '',
+      hash: result.hash
+    }
+  } catch (e) {
+    console.log(e)
+    return {
+      success: false,
+      message: e.decodedError,
+      hash: e.error
+    }
+  }
+}
+
+async function addPerson(caseNumber, personalData) {
+  try {
+    const human = {
+      case_number: caseNumber,
+      personal_data: personalData
+    };
+
+    const contract = await getContract()
+    const result = await contract.methods.add_human(caseNumber, human, personalData)
+
+    return {
+      success: true,
+      message: '',
+      hash: result.hash
+    }
+  } catch (e) {
+    return {
+      success: false,
+      message: e.decodedError,
+      hash: e.error
+    }
+  }
+}
