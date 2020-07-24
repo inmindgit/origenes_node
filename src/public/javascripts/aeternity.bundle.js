@@ -14,7 +14,7 @@ if (snipForm) {
 
 async function resultadosSnip(e) {
   e.preventDefault();
-  const caseNumber = document.getElementsByName('caseNumber').value;
+  const caseNumber = document.getElementsByName('caseNumber')[0].value;
   let array = [];
   
   document.getElementsByName('marcadores[]').forEach((e) => {
@@ -25,7 +25,7 @@ async function resultadosSnip(e) {
 
   if(result.success) {
     alert(`Hash: ${result.hash}`)
-    window.location.href = '/muestras/new'; // after clicking the alert, redirect to the empty form
+    window.location.href = '/resultados/new'; // after clicking the alert, redirect to the empty form
   } else {
     alert(`Error: ${result.message}`)
   }
@@ -238,7 +238,6 @@ async function addStr(caseNumber, strArray) {
 
 async function addSnp(caseNumber, snpArray) {
   try {
-    console.log('>>>>>>>>>>>>', snpArray);
     const date = new Date().toISOString();
     const dnaSample = {
       system: {
@@ -253,9 +252,13 @@ async function addSnp(caseNumber, snpArray) {
       }
     };
 
+    console.log(dnaSample);
+
     const contract = await getContract()
     const result = await contract.methods.add_dna_sample(dnaSample, caseNumber);
-    
+
+    console.log(result);
+
     return {
       success: true,
       message: '',
