@@ -5,6 +5,7 @@ const authenticateUserService = require('./../../services/authenticateUserServic
 passport.use('login', new LocalStrategy(
   async (username, password, done)  =>{
     try {
+      console.log('asdasdasdasd')
       const result = await authenticateUserService.userRegistration();
 
       switch (result.success) {

@@ -4,7 +4,8 @@ const matchSnpService = require("../services/matchSnpService");
 module.exports = {
   async find(req, res) {
     return res.render('coincidencias/find', {
-      title: 'Buscar muestras'
+      title: 'Buscar muestras',
+      currentUser: req.user
     });
   },
 
@@ -31,7 +32,8 @@ module.exports = {
       req.flash('error', result.message)
       res.locals.message = req.flash()
       return res.render('coincidencias/find', {
-        error: result.message
+        error: result.message,
+        currentUser: req.user
       })
     }
   },
@@ -64,7 +66,8 @@ module.exports = {
       req.flash('error', result.message)
       res.locals.message = req.flash()
       return res.render('coincidencias/find', {
-        error: result.message
+        error: result.message,
+        currentUser: req.user
       })
     }
   }
