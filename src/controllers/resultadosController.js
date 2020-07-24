@@ -51,6 +51,8 @@ module.exports = {
       strObjects.push(marcador);
     }
 
+    console.log(strObjects);
+
     // enviar los datos ingresados al BC
     const keypair = JSON.parse(process.env.KEYPAIR);
 
@@ -59,6 +61,8 @@ module.exports = {
       caseNumber,
       strObjects
     );
+
+    console.log(result);
 
     // redireccionar al usuari al lugar apropiado si esta todo OK, caso contrario mostrar errores.
     if(result.success) {

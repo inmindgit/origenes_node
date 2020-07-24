@@ -5,15 +5,35 @@ block content
     div.container
       .content
         .row
-          .col-lg-12
-            .text-center
+          .col-lg-12.mt-4
+            .row
               if (currentUser.role === 'Admin' || currentUser.role === 'Operator')
-                a(href="/muestras/new" class="btn btn-lg btn-primary btn-block mt-3") Agregar persona
-                br
-                a(href="/muestras/find" class="btn btn-lg btn-primary btn-block mt-3") Solicitar muestra
-              br
+                .col-lg-3
+                  a(href="/muestras/new" class="btn btn-default" style="width:100%;height:100%;") 
+                    .p-4
+                      i.fas.fa-user-plus
+                      br
+                      | Agregar persona
+                
+                .col-lg-3
+                  a(href="/muestras/find" class="btn btn-default " style="width:100%;height:100%;") 
+                    .p-4
+                      i.fas.fa-vial
+                      br
+                      | Solicitar muestra
+              
               if (currentUser.role === 'Admin' || currentUser.role === 'Lab')
-                a(href="/resultados/new" class="btn btn-lg btn-primary btn-block mt-3") Agregar resultados de muestras
-              br
+                .col-lg-3
+                  a(href="/resultados/new" class="btn btn-default" style="width:100%;height:100%;") 
+                    .p-4
+                      i.fas.fa-dna
+                      br
+                      | Agregar resultados de muestras
+                
               if (currentUser.role === 'Admin' || currentUser.role === 'Viewer' || currentUser.role === 'Operator')
-                a(href="/coincidencias/find" class="btn btn-lg btn-primary btn-block mt-3") Búsqueda de coincidencias
+                .col-lg-3
+                  a(href="/coincidencias/find" class="btn btn-default" style="width:100%;height:100%;") 
+                    .p-4
+                      i.fas.fa-search
+                      br
+                      | Búsqueda de coincidencias
