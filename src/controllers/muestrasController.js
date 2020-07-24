@@ -11,7 +11,7 @@ module.exports = {
     // este numero no podra ser modificado en la UI.
     // este numero debera ser devuelto en el formulario para ser enviado a BC en accion `create`
     return res.render('muestras/new', {
-      title: 'Cargar nueva muestra',
+      title: 'Agregar nueva persona',
       number,
       currentUser: req.user
     });
@@ -32,12 +32,13 @@ module.exports = {
         laboratoryOfOrigin
       } = req.body;
 
-      const caseNumberEncrypted = cryptoService.encryptString(caseNumber)
-      const nameEncrypted = cryptoService.encryptString(name)
-      const lastNameEncrypted = cryptoService.encryptString(lastName)
-      const documentIDEncrypted = cryptoService.encryptString(documentID)
-      const registryCountryEncrypted = cryptoService.encryptString(registryCountry)
-      const identityCountryEncrypted = cryptoService.encryptString(identityCountry)
+      //  cryptoService.encryptString
+      const caseNumberEncrypted = caseNumber
+      const nameEncrypted = name
+      const lastNameEncrypted = lastName
+      const documentIDEncrypted = documentID
+      const registryCountryEncrypted = registryCountry
+      const identityCountryEncrypted = identityCountry
 
       const personalData = new PersonalData(caseNumberEncrypted, nameEncrypted, lastNameEncrypted, documentIDEncrypted, registryCountryEncrypted, identityCountryEncrypted)
       
