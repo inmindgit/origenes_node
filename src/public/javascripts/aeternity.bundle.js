@@ -7,6 +7,42 @@ const SNP = 'SNP';
 const SNPID = 1;
 const STRID = 2;
 
+const snipFormCoincidencias = document.getElementById('snipFormCoincidencias')
+if (snipFormCoincidencias) {
+  snipFormCoincidencias.addEventListener('submit', coincidenciasSnip, false);
+}
+
+async function coincidenciasSnip(e) {
+  e.preventDefault();
+  const caseNumber = document.getElementsByName('caseNumber')[0].value;
+  let array = [];
+  
+  document.getElementsByName('marcadores[]').forEach((e) => {
+    array.push(e.value);
+  });
+
+  let result = await matchSnp(caseNumber, array);
+
+  if(result.success) {
+    const tbody = document.getElementById('resultsTabe').getElementsByTagName('tbody')[0];
+    result.payload.forEach(e => {
+      const newRow = tbody.insertRow();
+
+      const cell = newRow.insertCell(0);
+      cell.innerHTML = e.case_number;
+      return;
+    })
+    
+    $('#modal').modal('toggle')
+
+    $('#modal').on('hidden.bs.modal', function (e) {
+      window.location.href = '/coincidencias/find';
+    })
+  } else {
+    alert(`Error: ${result.message}`)
+  }
+}
+
 const snipForm = document.getElementById('snipForm')
 if (snipForm) {
   snipForm.addEventListener('submit', resultadosSnip, false);
@@ -149,12 +185,20 @@ async function matchSnp(caseNumber, snpArray) {
       }
     };
 
+    
     const contract = await getContract();
     const result = await contract.methods.look_for_match(dnaSample);
-
+    
+    return {
+      success: true,
+      payload: result.decodedResult
+    };
   } catch (e) {
     console.log(e)
-    alert(e.decodedError)
+    return {
+      success: false,
+      message: result.decodedError
+    };
   }
 }
 
@@ -252,12 +296,8 @@ async function addSnp(caseNumber, snpArray) {
       }
     };
 
-    console.log(dnaSample);
-
     const contract = await getContract()
     const result = await contract.methods.add_dna_sample(dnaSample, caseNumber);
-
-    console.log(result);
 
     return {
       success: true,

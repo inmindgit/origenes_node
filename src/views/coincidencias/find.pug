@@ -32,7 +32,7 @@ block content
           .col-lg-12
             .tab-content(id="custom-tabs-form-tabContent")
               .tab-pane.fade(id="custom-tabs-snp" role="tabpanel")
-                form(action="/coincidencias/snp", method="post", class="col-12")
+                form(action="/coincidencias/snp", method="post", class="col-12", id="snipFormCoincidencias")
                   .card
                     .card-body
                       include ../resultados/snip.pug
@@ -50,3 +50,17 @@ block content
                       button(type="submit" class="btn btn-primary float-right") Consultar
                       a(href="/" class="btn btn-default") Cancelar
                 
+  div(class="modal" id="modal" tabindex="-1" role="dialog")
+    div(class="modal-dialog" role="document")
+      .modal-content
+        .modal-header
+          h5.modal-title
+          button(type="button" class="close" data-dismiss="modal" aria-label="Close")
+            span(aria-hidden="true") &times;
+        .modal-body
+          .table-responsive
+            table#resultsTabe.table.table-striped
+              thead
+                th Núm. Resultado
+              tbody
+
