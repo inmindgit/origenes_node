@@ -319,4 +319,14 @@ async function crearMuestra(e) {
     alert(`Error: ${result.message}`);
   }
 }
+
+let searchMuestraForm = document.getElementById('search-muestra-form');
+if(searchMuestraForm != null) {
+  searchMuestraForm.addEventListener('submit', searchMuestra, false);
+}
+
+async function searchMuestra(e) {
+  e.preventDefault();
+  console.log('search-muestra-form');
+}
 },{}]},{},[1]);
