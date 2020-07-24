@@ -7,14 +7,10 @@ const authorizationService = require('../services/authorization/authorizationSer
 
 router.get('/new', authSession.checkSession, authorizationService.authorize, muestrasController.new);
 
-router.get('/search', authSession.checkSession, authorizationService.authorize, searchController.searchCoincidencia);
-
 router.post('/create', authSession.checkSession, authorizationService.authorize, muestrasController.create);
 
-router.get('/new', muestrasController.new);
-router.post('/create', muestrasController.create);
+router.get('/find', authSession.checkSession, authorizationService.authorize, searchController.find);
 
-router.get('/find', searchController.find);
-router.get('/search', searchController.search);
+router.get('/search', authSession.checkSession, authorizationService.authorize, searchController.search);
 
 module.exports = router;
