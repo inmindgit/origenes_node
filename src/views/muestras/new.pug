@@ -19,16 +19,18 @@ block content
       .content
         .row
           .col-lg-12
-            form(action="/muestras/create", method="post", class="col-12" id="crear-muestra-form")
+            form(action="/muestras/create", method="post", class="" id="crear-muestra-form")
               .card
                 .card-body
-                  .row.no-gutters
-                    .col-md-4.pt-2.text-center.align-items-center
-                      h4 Número de actuación
-                      h3= number
+                  .row
+                    .col-lg-6
+                  
+                      h5 Número de actuación
+                      input(type="text" name='name' class="form-control mb-4" placeholder="Nombre" value=number disabled)
                       input(type="hidden", name='caseNumber' class="form-control" placeholder="Nombre" value=number)
-                    .col-md-8
-                      h4 Datos personales
+                    
+                    .col-lg-6
+                      h5 Datos personales
                       .row
                         .form-group.col-6
                           input(type="text" name='name' class="form-control" placeholder="Nombre")
@@ -39,13 +41,13 @@ block content
                           input(type="text" name='documentID' class="form-control" placeholder="Documento de identificación")
                       .row
                         .form-group.col-12
-                          input(type="text" name='identityCountry' class="form-control" placeholder="País de Nacimiento")
+                          input(type="text" name='identityCountry' class="form-control" placeholder="País de nacimiento")
                       .row
                         .form-group.col-12
                           input(type="text" name='registryCountry' class="form-control" placeholder="Ciudad y país de registro")
                       .row
                         .form-group.col-12
-                          input(type="text" name='laboratoryOfOrigin' class="form-control" placeholder="País de procedenci")
+                          input(type="text" name='laboratoryOfOrigin' class="form-control" placeholder="País de procedencia")
                 .card-footer
                   button(id="crear-muestra-submit" type="submit" class="btn btn-primary float-right ld-ext-right") Enviar
                     .ld.ld-ring.ld-spin
