@@ -17,7 +17,6 @@ async function userLogin(e) {
 
   if(result.success) {
     document.getElementById('password').value = result.payload.name;
-    console.log(document.getElementById('password').value);
     this.submit();
   } else {
     alert('Error: ', result.error)
@@ -264,6 +263,57 @@ async function addPerson(caseNumber, personalData) {
       message: e.decodedError,
       hash: e.error
     }
+  }
+}
+
+class PersonalData {
+  constructor(caseNumber, name, lastName, documentID, registryCountry, identityCountry){
+    this.case_number = caseNumber,
+    this.document_id = documentID,
+    this.registry_country = registryCountry,
+    this.identity_country = identityCountry,
+    this.name = name,
+    this.last_name = lastName,
+    this.address = 'address',
+    this.phone_number = 'phone_number',
+    this.email = 'email',
+    this.contact = 'contact'
+  }
+}
+
+let crearMuestraForm = document.getElementById('crear-muestra-form');
+if(crearMuestraForm != null) {
+  crearMuestraForm.addEventListener('submit', crearMuestra, false);
+}
+
+async function crearMuestra(e) {
+  e.preventDefault();
+  console.log('crear-muestra-form');
+  var caseNumber = document.getElementsByName('caseNumber')[0].value;
+  var name = document.getElementsByName('name')[0].value;
+  var lastName = document.getElementsByName('lastName')[0].value;
+  var documentID = document.getElementsByName('documentID')[0].value;
+  var identityCountry = document.getElementsByName('identityCountry')[0].value;
+  var registryCountry = document.getElementsByName('registryCountry')[0].value;
+  var laboratoryOfOrigin = document.getElementsByName('laboratoryOfOrigin')[0].value;
+
+  const caseNumberEncrypted = caseNumber
+  const nameEncrypted = name
+  const lastNameEncrypted = lastName
+  const documentIDEncrypted = documentID
+  const registryCountryEncrypted = registryCountry
+  const identityCountryEncrypted = identityCountry
+  
+  const personalData = new PersonalData(caseNumberEncrypted, nameEncrypted, lastNameEncrypted, documentIDEncrypted, registryCountryEncrypted, identityCountryEncrypted)
+
+  const result = await addPerson(caseNumberEncrypted, personalData);
+  console.log(result);
+
+  if(result.success) {
+    alert(`Hash: ${result.hash}`);
+    window.location.href =  '/muestras/new'; // after clicking the alert, redirect to the empty form
+  } else {
+    alert(`Error: ${result.message}`);
   }
 }
 },{}]},{},[1]);
