@@ -15,16 +15,24 @@ Si este archivo es nulo, el sistema no podrá ejecutarse.
 
 
 ## Almacenamiento en LocalStorage de claves en frontend.
-La librería utilizada para temas de almacenamiento y recupero de información en el Frontend es: `localforage`.
+Se utiliza LocalStorage de HTML5.
+Para almacenar claves desde la consola de desarrollo:
 
-Para almacenamiento de par de claves:
 ``` javascript
-await localforage.setItem('publicKey', PUBLIC_KEY_HERE)
-await localforage.setItem('secretKey', SECRET_KEY_HERE)
+$ window.localStorage.setItem('keypair', KEYPAIR)
 ```
 
-Para recuperar las claves previamente almacenadas:
+Para recuperar las claves:
 ``` javascript
-await localforage.getItem('publicKey', PUBLIC_KEY_HERE)
-await localforage.getItem('secretKey', SECRET_KEY_HERE)
+window.localStorage.getItem('keypair')
 ``` 
+
+## Desarrollo
+Para poder utilizar la función `require` de los módulos/paquetes de debemos compilar el archivo `.js` utilizando Browserify.
+
+1. Instalar Browserify de manera global
+``` javascript
+npm i -g browserify
+```
+2. Instalar dependencias del proyecto (es necesario el paquete `brsf` para utilizar `fs` en el navegador)
+3. Para compilar el nuevo archivo `*.bundle.js` se utiliza el comando: `browserify -t brsf nombrearchivo.js > nombrearchivo.bundle.js`, este ultimo es requerido en HTML para su uso.
