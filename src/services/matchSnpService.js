@@ -20,18 +20,18 @@ module.exports = {
       
       console.log(result);
       
-      // return {
-      //   success: true,
-      //   message: '',
-      //   hash: result.hash
-      // }
+      return {
+        success: true,
+        message: '',
+        hash: result.hash
+      }
     } catch (e) {
       console.log(e)
-      // return {
-      //   success: false,
-      //   message: e.decodedError,
-      //   hash: e.error
-      // }
+      return {
+        success: false,
+        message: e.decodedError,
+        hash: e.error
+      }
     }
   }
 }

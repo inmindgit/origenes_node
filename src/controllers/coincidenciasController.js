@@ -3,6 +3,7 @@ const matchSnpService = require("../services/matchSnpService");
 
 module.exports = {
   async find(req, res) {
+    res.locals.message = req.flash()
     return res.render('coincidencias/find', {
       title: 'Buscar muestras',
       currentUser: req.user
@@ -17,7 +18,7 @@ module.exports = {
     const marcadores = req.body['marcadores[]'];
 
     const keypair = JSON.parse(process.env.KEYPAIR);
-
+    
     const result = await matchSnpService.call(
       keypair,
       caseNumber,
@@ -58,6 +59,8 @@ module.exports = {
       caseNumber,
       strObjects
     );
+
+    console.log(result)
 
     // redireccionar al usuari al lugar apropiado si esta todo OK, caso contrario mostrar errores.
     if(result.success) {
