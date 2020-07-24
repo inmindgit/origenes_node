@@ -7,8 +7,32 @@ const SNP = 'SNP';
 const SNPID = 1;
 const STRID = 2;
 
-const loginForm = document.getElementById('loginForm') 
-if(loginForm) {
+const snipForm = document.getElementById('snipForm')
+if (snipForm) {
+  snipForm.addEventListener('submit', resultadosSnip, false);
+}
+
+async function resultadosSnip(e) {
+  e.preventDefault();
+  const caseNumber = document.getElementsByName('caseNumber')[0].value;
+  let array = [];
+  
+  document.getElementsByName('marcadores[]').forEach((e) => {
+    array.push(e.value);
+  });
+
+  let result = await addSnp(caseNumber, array);
+
+  if(result.success) {
+    alert(`Hash: ${result.hash}`)
+    window.location.href = '/resultados/new'; // after clicking the alert, redirect to the empty form
+  } else {
+    alert(`Error: ${result.message}`)
+  }
+}
+
+const loginForm = document.getElementById('loginForm') ;
+if(loginForm !== null) {
   loginForm.addEventListener('submit', userLogin, false);
 }
 
@@ -214,21 +238,26 @@ async function addStr(caseNumber, strArray) {
 
 async function addSnp(caseNumber, snpArray) {
   try {
+    const date = new Date().toISOString();
     const dnaSample = {
       system: {
         id: SNPID,
         name: SNP
       },
       analysis: {
-        doneDate: new Date().toISOString(),
+        doneDate: date,
         case_number: caseNumber,
         snp_result: snpArray,
         str_result: []
       }
     };
 
+    console.log(dnaSample);
+
     const contract = await getContract()
     const result = await contract.methods.add_dna_sample(dnaSample, caseNumber);
+
+    console.log(result);
 
     return {
       success: true,

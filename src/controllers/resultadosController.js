@@ -11,33 +11,33 @@ module.exports = {
   },
 
   async createSNP(req, res) {
-    // definir el nombre de los marcadores SNP (150 marcadores con diferentes valores posibles)
-    const {
-      caseNumber
-    } = req.body;
-    const marcadores = req.body['marcadores[]'];
+    // // definir el nombre de los marcadores SNP (150 marcadores con diferentes valores posibles)
+    // const {
+    //   caseNumber
+    // } = req.body;
+    // const marcadores = req.body['marcadores[]'];
 
-    const keypair = JSON.parse(process.env.KEYPAIR);
+    // const keypair = JSON.parse(process.env.KEYPAIR);
 
-    const result = await addSnpService.call(
-      keypair,
-      caseNumber,
-      marcadores
-    );
+    // const result = await addSnpService.call(
+    //   keypair,
+    //   caseNumber,
+    //   marcadores
+    // );
 
-    // redireccionar al usuario al lugar apropiado si esta todo OK, caso contrario mostrar errores.
-    if(result.success) {
-      req.flash('success', `Hash: ${result.hash}`);
-      return res.redirect('/resultados/new');
-    } else {
-      console.log('ERRRORRR')
-      req.flash('error', result.message)
-      res.locals.message = req.flash()
-      return res.render('resultados/new', {
-        error: result.message,
-        currentUser: req.user
-      })
-    }
+    // // redireccionar al usuario al lugar apropiado si esta todo OK, caso contrario mostrar errores.
+    // if(result.success) {
+    //   req.flash('success', `Hash: ${result.hash}`);
+    //   return res.redirect('/resultados/new');
+    // } else {
+    //   console.log('ERRRORRR')
+    //   req.flash('error', result.message)
+    //   res.locals.message = req.flash()
+    //   return res.render('resultados/new', {
+    //     error: result.message,
+    //     currentUser: req.user
+    //   })
+    // }
   },
 
   async createSTR(req, res) {
