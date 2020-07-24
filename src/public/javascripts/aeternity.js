@@ -327,4 +327,13 @@ if(searchMuestraForm != null) {
 async function searchMuestra(e) {
   e.preventDefault();
   console.log('search-muestra-form');
+  var documentId = document.getElementsByName('documentId')[0].value;
+
+  const result = await askNumberCase(documentId);
+  console.log(result);
+  if(result.success) {
+    document.getElementById('search-result').innerHTML = result.hash;
+  } else {
+    document.getElementById('search-result').innerHTML = "Error: " + result.message;
+  }
 }
