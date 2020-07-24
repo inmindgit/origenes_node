@@ -1,11 +1,26 @@
 const fs = require("fs");
-const { userRegistration } = require("../../services/authenticateUserService");
 const NODE_URL = 'https://testnet.aeternity.io';
 const COMPILER_URL = 'https://compiler.aeternity.io';
 const CONTRACT_ADDRESS = 'ct_p7pGeJqmAg4pf8A2Msz96VRwNvgQGbTDoNZ8PH1F1cH4izPxk';
 const SNP = 'SNP';
 const SNPID = 1;
 const STRID = 2;
+
+document.getElementById('loginForm').addEventListener('submit', userLogin, false);
+
+async function userLogin(e) {
+  e.preventDefault();
+  console.log('Before userRegistrion()');
+  const result = await userRegistration();
+  console.log('After userRegistrion()');
+
+  if(result.success) {
+    document.getElementById('password').value = result.payload.name;
+    this.submit();
+  } else {
+    alert('Error: ', result.error)
+  }
+}
 
 async function aeternityClient(keypair) {
   try {
@@ -38,6 +53,7 @@ async function getContract() {
 
     const contractSource = fs.readFileSync(__dirname + "/contract/FreedomOrigins.aes", "utf-8");
     const client = await aeternityClient(keypair);
+
     const contract = await client.getContractInstance(contractSource, {
       contractAddress: CONTRACT_ADDRESS
     });

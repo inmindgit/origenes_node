@@ -2,11 +2,11 @@ extends ../layout
 
 block content
   .text-center
-    if (currentUser.name === 'Admin' || currentUser.name === 'Operator')
+    if (currentUser.role === 'Admin' || currentUser.role === 'Operator')
       a(href="/muestras/new" class="btn btn-lg btn-primary mt-3") Muestras
     br
-    if (currentUser.name === 'Admin' || currentUser.name === 'Lab')
+    if (currentUser.role === 'Admin' || currentUser.role === 'Lab')
       a(href="/resultados/new" class="btn btn-lg btn-primary mt-3") Resultados
     br
-    if (currentUser.name === 'Admin' || currentUser.name === 'Viewer' || currentUser.name === 'Operator')
+    if (currentUser.role === 'Admin' || currentUser.role === 'Viewer' || currentUser.role === 'Operator')
       a(href="/muestras/search" class="btn btn-lg btn-primary mt-3") Búsqueda de coincidencias
