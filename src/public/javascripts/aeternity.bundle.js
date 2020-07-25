@@ -2,7 +2,7 @@
 
 const NODE_URL = 'https://testnet.aeternity.io';
 const COMPILER_URL = 'https://compiler.aeternity.io';
-const CONTRACT_ADDRESS = 'ct_p7pGeJqmAg4pf8A2Msz96VRwNvgQGbTDoNZ8PH1F1cH4izPxk';
+const CONTRACT_ADDRESS = 'ct_kaaXpWATQ7D1N31GeJRURgwLRcWjZjZWpgXvYd8R9cdzZQZhM';
 const SNP = 'SNP';
 const STR = 'STR';
 const SNPID = 1;
