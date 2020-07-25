@@ -60,7 +60,6 @@ async function coincidenciasStr(e) {
 
 async function coincidenciasSnip(e) {
   e.preventDefault();
-  // const caseNumber = document.getElementsByName('caseNumber')[0].value;
   let array = [];
   
   document.getElementsByName('marcadores[]').forEach((e) => {
@@ -180,7 +179,7 @@ async function getContract() {
   try {
     const keypair = await JSON.parse(window.localStorage.getItem('keypair'));
     if(!keypair) {
-      throw Error('No posee keypair.');
+      throw 'No posee el par de claves para el acceso.';
     }
 
     const contractSource = fs.readFileSync(__dirname + "/contract/FreedomOrigins.aes", "utf-8");
@@ -531,6 +530,7 @@ async function addSrtResult(e){
 }
 
 function alertBox(title, body, callback){
+  body = body == undefined ? 'Hubo un error. Por favor intente nuevamente más tarde.' : body;
   bootbox.alert({
     size: 'large',
     title: title,
@@ -542,9 +542,20 @@ function alertBox(title, body, callback){
 function alertWithRedirect(title, hash, url){
   alertBox(
     title,
-    `<a href='https://explorer.testnet.aeternity.io/account/transactions/${hash}'> Verifique la transferencia ${hash}`,
+    `Verifique la transacción con el hash: <a href='https://explorer.testnet.aeternity.io/account/transactions/${hash}'>${hash}`,
     function(){
       window.location.href = url; // after clicking the alert, redirect to the empty form
     }
   )
 }
+
+
+// required: true with custom message
+$('form input[type=text],textarea').on('change invalid', function() {
+  var textfield = $(this).get(0);
+  textfield.setCustomValidity('');
+  
+  if (!textfield.validity.valid) {
+    textfield.setCustomValidity('Debe completar este campo');
+  }
+});
