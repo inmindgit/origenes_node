@@ -17,7 +17,7 @@ html
     link(rel='stylesheet', href='/vendor/admin-lte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css')
     link(rel='stylesheet', href='/vendor/admin-lte/plugins/daterangepicker/daterangepicker.css')
     link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700")
-  body(class={"layout-top-nav hold-transition": currentUser, "hold-transition login-page": !currentUser })
+  body(class={"layout-top-nav layout-navbar-fixed hold-transition": currentUser, "hold-transition login-page": !currentUser })
     if currentUser
       div(class="wrapper")
         include shared/navbar.pug
