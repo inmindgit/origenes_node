@@ -30,32 +30,44 @@ block content
                         a(class="btn btn-lg btn-default" href="#custom-tabs-snp" id="custom-tabs-form" data-toggle="pill" role="tab") SNIP
         .row
           .col-lg-12
-
-
             ul.nav.nav-tabs(id="custom-content-below-tab" role="tablist")
-                  li.nav-item
-                    a.nav-link.active(id="custom-content-below-home-tab" data-toggle="pill" href="#custom-tabs-str" role="tab" aria-controls="custom-content-below-home" aria-selected="true" style="font-size:20px;") STR
-                  li.nav-item
-                    a.nav-link(id="custom-content-below-home-tab" data-toggle="pill" href="#custom-tabs-snp" role="tab" aria-controls="custom-content-below-home" aria-selected="true" style="font-size:20px;") SNIP
-
-                    
+              li.nav-item
+                a.nav-link.active(id="custom-content-below-home-tab" data-toggle="pill" href="#custom-tabs-str" role="tab" aria-controls="custom-content-below-home" aria-selected="true" style="font-size:20px;") STR
+              li.nav-item
+                a.nav-link(id="custom-content-below-home-tab" data-toggle="pill" href="#custom-tabs-snp" role="tab" aria-controls="custom-content-below-home" aria-selected="true" style="font-size:20px;") SNIP
             .tab-content(id="custom-tabs-form-tabContent")
               .tab-pane.fade(id="custom-tabs-snp" role="tabpanel")
-                form(action="/coincidencias/snp", method="post", class="")
+                form(action="/coincidencias/snp", method="post", class="", id="snipFormCoincidencias")
                   .card
                     .card-body
                       include ../resultados/snip.pug
                     .card-footer
-                      button(type="submit" class="btn btn-primary float-right") Consultar
-                      button(type="submit" class="btn btn-default") Cancelar
+                      button(type="submit" id="consultarCoincidenciasSnip" class="btn btn-primary float-right ld-ext-right") Consultar
+                        .ld.ld-ring.ld-spin
+                      a(href="/" class="btn btn-default") Cancelar
               .tab-pane.fade.active.show(id="custom-tabs-str" role="tabpanel")
-                form(action="/coincidencias/str", method="post", class="")
+                form(action="/coincidencias/str", method="post", class="", id="strFormCoincidencias")
                   .card
                     .card-body
                       .row
                         .col-12
                           include ../resultados/str.pug
                     .card-footer
-                      button(type="submit" class="btn btn-primary float-right") Consultar
+                      button(type="submit" id="consultarCoincidenciasStr" class="btn btn-primary float-right ld-ext-right") Consultar
+                        .ld.ld-ring.ld-spin
                       a(href="/" class="btn btn-default") Cancelar
                 
+  div(class="modal" id="modal" tabindex="-1" role="dialog")
+    div(class="modal-dialog" role="document")
+      .modal-content
+        .modal-header
+          h5.modal-title
+          button(type="button" class="close" data-dismiss="modal" aria-label="Close")
+            span(aria-hidden="true") &times;
+        .modal-body
+          .table-responsive
+            table#resultsTabe.table.table-striped
+              thead
+                th Núm. Resultado
+              tbody
+

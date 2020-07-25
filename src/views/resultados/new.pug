@@ -30,31 +30,29 @@ block content
                         a(class="btn btn-lg btn-default" href="#custom-tabs-snp" id="custom-tabs-form" data-toggle="pill" role="tab") SNIP
         .row
           .col-lg-12
-            
-
-                ul.nav.nav-tabs(id="custom-content-below-tab" role="tablist")
-                  li.nav-item
-                    a.nav-link.active(id="custom-content-below-home-tab" data-toggle="pill" href="#custom-tabs-str" role="tab" aria-controls="custom-content-below-home" aria-selected="true" style="font-size:20px;") STR
-                  li.nav-item
-                    a.nav-link(id="custom-content-below-home-tab" data-toggle="pill" href="#custom-tabs-snp" role="tab" aria-controls="custom-content-below-home" aria-selected="true" style="font-size:20px;") SNIP
-
-                .tab-content(id="custom-tabs-form-tabContent")
-                  .tab-pane.fade(id="custom-tabs-snp" role="tabpanel")
-                    form(action="/resultados/createSNP", method="post", class="", id="snipForm")
-                      .card
-                        .card-body
-                          include snip.pug
-                        .card-footer
-                          button(type="submit" class="btn btn-primary float-right") Enviar
-                          a(href="/" class="btn btn-default") Cancelar
-                  .tab-pane.fade.active.show(id="custom-tabs-str" role="tabpanel")
-                    form(action="/resultados/createSTR", method="post", class="" id="add-srt-result-form")
-                      .card
-                        .card-body
-                          .row
-                            .col-12
-                              include str.pug
-                        .card-footer
-                          button(type="submit" class="btn btn-primary float-right") Enviar
-                          a(href="/" class="btn btn-default") Cancelar
-                
+            ul.nav.nav-tabs(id="custom-content-below-tab" role="tablist")
+              li.nav-item
+                a.nav-link.active(id="custom-content-below-home-tab" data-toggle="pill" href="#custom-tabs-str" role="tab" aria-controls="custom-content-below-home" aria-selected="true" style="font-size:20px;") STR
+              li.nav-item
+                a.nav-link(id="custom-content-below-home-tab" data-toggle="pill" href="#custom-tabs-snp" role="tab" aria-controls="custom-content-below-home" aria-selected="true" style="font-size:20px;") SNIP
+            .tab-content(id="custom-tabs-form-tabContent")
+              .tab-pane.fade(id="custom-tabs-snp" role="tabpanel")
+                form(action="/resultados/createSNP", method="post", class="col-12", id="snipForm")
+                  .card
+                    .card-body
+                      include snip.pug
+                    .card-footer
+                      button(type="submit" id="resultadosSnip" class="btn btn-primary float-right ld-ext-right") Enviar
+                        .ld.ld-ring.ld-spin
+                      a(href="/" class="btn btn-default") Cancelar
+              .tab-pane.fade.active.show(id="custom-tabs-str" role="tabpanel")
+                form(action="/resultados/createSTR", method="post", class="col-12" id="add-srt-result-form")
+                  .card
+                    .card-body
+                      .row
+                        .col-12
+                          include str.pug
+                    .card-footer
+                      button(type="submit" id="resultadosStr" class="btn btn-primary float-right ld-ext-right") Enviar
+                        .ld.ld-ring.ld-spin
+                      a(href="/" class="btn btn-default") Cancelar
