@@ -507,6 +507,20 @@ if(loginForm !== null) {
 async function userLogin(e) {
   e.preventDefault();
 
+  const public_key = document.getElementById("username").value
+  const private_key = document.getElementById("password").value
+  
+  window.localStorage.setItem(
+    'keypair',
+    `{
+      "publicKey": "${public_key}",
+      "secretKey": "${private_key}"
+    }`
+  )
+
+  console.log(window.localStorage.getItem('keypair'));
+
+
   document.getElementById("submitLogin").classList.add("running");
   document.getElementById("submitLogin").classList.add("disabled");
   document.getElementById("submitLogin").disabled = true;
