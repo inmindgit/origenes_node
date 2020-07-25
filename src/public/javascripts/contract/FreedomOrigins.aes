@@ -114,9 +114,9 @@ contract FreedomOrigins =
   stateful entrypoint test_init() = 
     isOwner()
     add_user("mail1@mail.com","Admin",1,ak_2AKzXHEE3bA4s74B1RHj4N1n5tDaNt5rQEruttKSkd8JhhKs6U)
-    add_user("mail2@mail.com","Lab",1,ak_22QpWFkBYWBhALduLpr4ZVQ7xMCDB8sF6KN63DrzGtcBniXTha)
-    add_user("mail3@mail.com","Operator",1,ak_r96z4YiSFuP5r2rHHJTisCq4puffNCrrPvXSbFgqxHgMf6RHr)
-    add_user("mail4@mail.com","Viewer",1,ak_uhxgm72mR1JfuKN3VgZAk4EdmgYj7XEBganik3FRMKXazDkLP)
+    add_user("mail2@mail.com","Lab",3,ak_22QpWFkBYWBhALduLpr4ZVQ7xMCDB8sF6KN63DrzGtcBniXTha)
+    add_user("mail3@mail.com","Operator",2,ak_r96z4YiSFuP5r2rHHJTisCq4puffNCrrPvXSbFgqxHgMf6RHr)
+    add_user("mail4@mail.com","Viewer",4,ak_uhxgm72mR1JfuKN3VgZAk4EdmgYj7XEBganik3FRMKXazDkLP)
 
 
   function get_human_by_id(document_id_to_find:string) : option(human) =
