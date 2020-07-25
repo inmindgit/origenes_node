@@ -1,6 +1,4 @@
 const fs = require("fs");
-const CryptoJS = require("crypto-js");
-const SECRET_KEY = 'secret-key'
 const NODE_URL = 'https://testnet.aeternity.io';
 const COMPILER_URL = 'https://compiler.aeternity.io';
 const CONTRACT_ADDRESS = 'ct_kaaXpWATQ7D1N31GeJRURgwLRcWjZjZWpgXvYd8R9cdzZQZhM';
@@ -505,19 +503,20 @@ async function crearMuestra(e) {
   var registryCountry = document.getElementsByName('registryCountry')[0].value;
   var laboratoryOfOrigin = document.getElementsByName('laboratoryOfOrigin')[0].value;
 
-  const nameEncrypted = encrypt(name)
-  const lastNameEncrypted = encrypt(lastName)
-  const documentIDEncrypted = encrypt(documentID)
-  const registryCountryEncrypted = encrypt(registryCountry)
-  const identityCountryEncrypted = encrypt(identityCountry)
+  const caseNumberEncrypted = caseNumber
+  const nameEncrypted = name
+  const lastNameEncrypted = lastName
+  const documentIDEncrypted = documentID
+  const registryCountryEncrypted = registryCountry
+  const identityCountryEncrypted = identityCountry
   
-  const personalData = new PersonalData(caseNumber, nameEncrypted, lastNameEncrypted, documentIDEncrypted, registryCountryEncrypted, identityCountryEncrypted)
+  const personalData = new PersonalData(caseNumberEncrypted, nameEncrypted, lastNameEncrypted, documentIDEncrypted, registryCountryEncrypted, identityCountryEncrypted)
 
   document.getElementById("crear-muestra-submit").classList.add("running");
   document.getElementById("crear-muestra-submit").classList.add("disabled");
   document.getElementById("crear-muestra-submit").disabled = true;
 
-  const result = await addPerson(caseNumber, personalData);
+  const result = await addPerson(caseNumberEncrypted, personalData);
   console.log(result);
 
   document.getElementById("crear-muestra-submit").classList.remove("running");
@@ -540,6 +539,8 @@ async function searchMuestra(e) {
   e.preventDefault();
   console.log('search-muestra-form');
   var documentId = document.getElementsByName('documentId')[0].value;
+
+  
 
   document.getElementById("search-muestra-submit").classList.add("running");
   document.getElementById("search-muestra-submit").classList.add("disabled");
@@ -629,25 +630,3 @@ $('form input[type=text],textarea').on('change invalid', function() {
     textfield.setCustomValidity('Debe completar este campo');
   }
 });
-
-// crypto services
-function encrypt(string) {
-  try {
-    const encryptedString = CryptoJS.AES.encrypt(string, SECRET_KEY).toString();
-
-    return encryptedString;
-  } catch (e) {
-    console.log(e)
-  }
-}
-
-function decrypt(string) {
-  try {
-    const bytes = CryptoJS.AES.decrypt(encryptedString, SECRET_KEY);
-    const originalString = bytes.toString(CryptoJS.enc.Utf8);
-
-    return originalString;
-  } catch (e) {
-    console.log(e)
-  }
-}
