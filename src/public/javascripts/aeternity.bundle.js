@@ -8,9 +8,57 @@ const STR = 'STR';
 const SNPID = 1;
 const STRID = 2;
 
-const snipFormCoincidencias = document.getElementById('snipFormCoincidencias')
+const snipFormCoincidencias = document.getElementById('snipFormCoincidencias');
 if (snipFormCoincidencias) {
   snipFormCoincidencias.addEventListener('submit', coincidenciasSnip, false);
+}
+
+const strFormCoincidencias = document.getElementById('strFormCoincidencias');
+if (strFormCoincidencias) {
+  strFormCoincidencias.addEventListener('submit', coincidenciasStr, false);
+}
+
+async function coincidenciasStr(e) {
+  e.preventDefault();
+
+  const caseNumber = document.getElementById('caseNumber').value;
+  const strObjects = [];
+
+  for (let i = 1; i < 21; i++) {
+    const marcador = document.getElementsByName(`marcador[${i}][]`)
+    marcadorArr = []
+    marcador.forEach((e) => marcadorArr.push(e.value))
+    strObjects.push(marcadorArr);
+  }
+  document.getElementById("consultarCoincidenciasStr").classList.add("running");
+  document.getElementById("consultarCoincidenciasStr").classList.add("disabled");
+  document.getElementById("consultarCoincidenciasStr").disabled = true;
+
+  const result = await matchStr(caseNumber, strObjects);
+
+  document.getElementById("consultarCoincidenciasStr").classList.remove("running");
+  document.getElementById("consultarCoincidenciasStr").classList.remove("disabled");
+  document.getElementById("consultarCoincidenciasStr").disabled = false;
+
+
+  if (result.success) {
+    const tbody = document.getElementById('resultsTabe').getElementsByTagName('tbody')[0];
+    result.payload.forEach(e => {
+      const newRow = tbody.insertRow();
+
+      const cell = newRow.insertCell(0);
+      cell.innerHTML = e.case_number;
+      return;
+    })
+
+    $('#modal').modal('toggle')
+
+    $('#modal').on('hidden.bs.modal', function (e) {
+      window.location.href = '/coincidencias/find';
+    })
+  } else {
+    alert(`Error: ${result.message}`);
+  }
 }
 
 async function coincidenciasSnip(e) {
@@ -21,8 +69,15 @@ async function coincidenciasSnip(e) {
   document.getElementsByName('marcadores[]').forEach((e) => {
     array.push(e.value);
   });
-
+  document.getElementById("consultarCoincidenciasSnip").classList.add("running");
+  document.getElementById("consultarCoincidenciasSnip").classList.add("disabled");
+  document.getElementById("consultarCoincidenciasSnip").disabled = true;
+  
   let result = await matchSnp(caseNumber, array);
+
+  document.getElementById("consultarCoincidenciasSnip").classList.remove("running");
+  document.getElementById("consultarCoincidenciasSnip").classList.remove("disabled");
+  document.getElementById("consultarCoincidenciasSnip").disabled = false;
 
   if(result.success) {
     const tbody = document.getElementById('resultsTabe').getElementsByTagName('tbody')[0];
@@ -57,8 +112,15 @@ async function resultadosSnip(e) {
   document.getElementsByName('marcadores[]').forEach((e) => {
     array.push(e.value);
   });
-
+  document.getElementById("resultadosSnip").classList.add("running");
+  document.getElementById("resultadosSnip").classList.add("disabled");
+  document.getElementById("resultadosSnip").disabled = true;
+  
   let result = await addSnp(caseNumber, array);
+  
+  document.getElementById("resultadosSnip").classList.remove("running");
+  document.getElementById("resultadosSnip").classList.remove("disabled");
+  document.getElementById("resultadosSnip").disabled = false;
 
   if(result.success) {
     alert(`Hash: ${result.hash}`)
@@ -161,21 +223,18 @@ async function matchStr(caseNumber, strArray) {
     };
 
     const contract = await getContract();
-    const result = await contract.methods.add_dna_sample(dnaSample, caseNumber);
+    const result = await contract.methods.look_for_match(dnaSample);
 
+    console.log(result);
     return {
       success: true,
-      message: '',
-      hash: result.hash
+      payload: result.decodedResult
     }
   } catch (e) {
-    console.log(e.decodedError);
-    alert('Ocurrió un error: ', e.decodedError);
-    
+    console.log(e.decodedError);    
     return {
       success: false,
-      message: e.decodedError,
-      hash: e.error
+      message: e.decodedError
     }
   }
 }
@@ -456,7 +515,15 @@ async function addSrtResult(e){
     strObjects.push(marcadorArr);
   }
 
+  document.getElementById("resultadosStr").classList.add("running");
+  document.getElementById("resultadosStr").classList.add("disabled");
+  document.getElementById("resultadosStr").disabled = true;
+  
   const result = await addStr(caseNumber, strObjects);
+  
+  document.getElementById("resultadosStr").classList.remove("running");
+  document.getElementById("resultadosStr").classList.remove("disabled");
+  document.getElementById("resultadosStr").disabled = false;
 
   if(result.success) {
     alert(`Hash: ${result.hash}`);

@@ -37,7 +37,8 @@ block content
                     .card-body
                       include snip.pug
                     .card-footer
-                      button(type="submit" class="btn btn-primary float-right") Enviar
+                      button(type="submit" id="resultadosSnip" class="btn btn-primary float-right ld-ext-right") Enviar
+                        .ld.ld-ring.ld-spin
                       a(href="/" class="btn btn-default") Cancelar
               .tab-pane.fade.active.show(id="custom-tabs-str" role="tabpanel")
                 form(action="/resultados/createSTR", method="post", class="col-12" id="add-srt-result-form")
@@ -47,6 +48,7 @@ block content
                         .col-12
                           include str.pug
                     .card-footer
-                      button(type="submit" class="btn btn-primary float-right") Enviar
+                      button(type="submit" id="resultadosStr" class="btn btn-primary float-right ld-ext-right") Enviar
+                        .ld.ld-ring.ld-spin
                       a(href="/" class="btn btn-default") Cancelar
                 
