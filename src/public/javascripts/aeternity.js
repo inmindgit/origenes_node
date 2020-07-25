@@ -122,10 +122,9 @@ async function resultadosSnip(e) {
   document.getElementById("resultadosSnip").disabled = false;
 
   if(result.success) {
-    alert(`Hash: ${result.hash}`)
-    window.location.href = '/resultados/new'; // after clicking the alert, redirect to the empty form
+    alertWithRedirect('', result.hash, '/resultados/new');
   } else {
-    alert(`Error: ${result.message}`)
+    alertBox('Error', result.message)
   }
 }
 
@@ -153,7 +152,7 @@ async function userLogin(e) {
     document.getElementById('password').value = result.payload.name;
     this.submit();
   } else {
-    alert('Error: ', result.error)
+    alertBox('Error', result.message)
   }
 }
 
@@ -195,7 +194,7 @@ async function getContract() {
 
     return contract;
   } catch(e) {
-    alert(e);
+    alertBox('Error', e)
   }
 }
 
@@ -458,10 +457,9 @@ async function crearMuestra(e) {
   document.getElementById("crear-muestra-submit").disabled = false;
 
   if(result.success) {
-    alert(`Hash: ${result.hash}`);
-    window.location.href =  '/muestras/new'; // after clicking the alert, redirect to the empty form
+    alertWithRedirect('', result.hash, '/muestras/new');
   } else {
-    alert(`Error: ${result.message}`);
+    alertBox('Error', result.message)
   }
 }
 
@@ -525,9 +523,27 @@ async function addSrtResult(e){
   document.getElementById("resultadosStr").disabled = false;
 
   if(result.success) {
-    alert(`Hash: ${result.hash}`);
-    window.location.href = '/resultados/new'; // after clicking the alert, redirect to the empty form
+    alertWithRedirect('', result.hash, '/resultados/new');
   } else {
-    alert(`Error: ${result.message}`);
+    alertBox('Error', result.message);
   }
+}
+
+function alertBox(title, body, callback){
+  bootbox.alert({
+    size: 'large',
+    title: title,
+    message: body,
+    callback: callback
+  })
+}
+
+function alertWithRedirect(title, hash, url){
+  alertBox(
+    title,
+    `<a href='https://explorer.testnet.aeternity.io/account/transactions/${hash}'> Verifique la transferencia ${hash}`,
+    function(){
+      window.location.href = url; // after clicking the alert, redirect to the empty form
+    }
+  )
 }
