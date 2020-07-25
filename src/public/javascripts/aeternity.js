@@ -7,151 +7,9 @@ const STR = 'STR';
 const SNPID = 1;
 const STRID = 2;
 
-const snipFormCoincidencias = document.getElementById('snipFormCoincidencias');
-if (snipFormCoincidencias) {
-  snipFormCoincidencias.addEventListener('submit', coincidenciasSnip, false);
-}
-
-const strFormCoincidencias = document.getElementById('strFormCoincidencias');
-if (strFormCoincidencias) {
-  strFormCoincidencias.addEventListener('submit', coincidenciasStr, false);
-}
-
-async function coincidenciasStr(e) {
-  e.preventDefault();
-  const strObjects = [];
-
-  for (let i = 1; i < 21; i++) {
-    const marcador = document.getElementsByName(`marcador[${i}][]`)
-    marcadorArr = []
-    marcador.forEach((e) => marcadorArr.push(e.value))
-    strObjects.push(marcadorArr);
-  }
-  document.getElementById("consultarCoincidenciasStr").classList.add("running");
-  document.getElementById("consultarCoincidenciasStr").classList.add("disabled");
-  document.getElementById("consultarCoincidenciasStr").disabled = true;
-
-  const result = await matchStr(strObjects);
-
-  document.getElementById("consultarCoincidenciasStr").classList.remove("running");
-  document.getElementById("consultarCoincidenciasStr").classList.remove("disabled");
-  document.getElementById("consultarCoincidenciasStr").disabled = false;
-
-
-  if (result.success) {
-    const tbody = document.getElementById('resultsTabe').getElementsByTagName('tbody')[0];
-    result.payload.forEach(e => {
-      const newRow = tbody.insertRow();
-
-      const cell = newRow.insertCell(0);
-      cell.innerHTML = e.case_number;
-      return;
-    })
-
-    $('#modal').modal('toggle')
-
-    $('#modal').on('hidden.bs.modal', function (e) {
-      window.location.href = '/coincidencias/find';
-    })
-  } else {
-    alertBox('Error', result.message)
-  }
-}
-
-async function coincidenciasSnip(e) {
-  e.preventDefault();
-  let array = [];
-  
-  document.getElementsByName('marcadores[]').forEach((e) => {
-    array.push(e.value);
-  });
-  document.getElementById("consultarCoincidenciasSnip").classList.add("running");
-  document.getElementById("consultarCoincidenciasSnip").classList.add("disabled");
-  document.getElementById("consultarCoincidenciasSnip").disabled = true;
-  
-  let result = await matchSnp(array);
-
-  document.getElementById("consultarCoincidenciasSnip").classList.remove("running");
-  document.getElementById("consultarCoincidenciasSnip").classList.remove("disabled");
-  document.getElementById("consultarCoincidenciasSnip").disabled = false;
-
-  if(result.success) {
-    const tbody = document.getElementById('resultsTabe').getElementsByTagName('tbody')[0];
-    result.payload.forEach(e => {
-      const newRow = tbody.insertRow();
-
-      const cell = newRow.insertCell(0);
-      cell.innerHTML = e.case_number;
-      return;
-    })
-    
-    $('#modal').modal('toggle')
-
-    $('#modal').on('hidden.bs.modal', function (e) {
-      window.location.href = '/coincidencias/find';
-    })
-  } else {
-    alertBox('Error', result.message)
-  }
-}
-
-const snipForm = document.getElementById('snipForm')
-if (snipForm) {
-  snipForm.addEventListener('submit', resultadosSnip, false);
-}
-
-async function resultadosSnip(e) {
-  e.preventDefault();
-  const caseNumber = document.getElementsByName('caseNumber')[0].value;
-  let array = [];
-  
-  document.getElementsByName('marcadores[]').forEach((e) => {
-    array.push(e.value);
-  });
-  document.getElementById("resultadosSnip").classList.add("running");
-  document.getElementById("resultadosSnip").classList.add("disabled");
-  document.getElementById("resultadosSnip").disabled = true;
-  
-  let result = await addSnp(caseNumber, array);
-  
-  document.getElementById("resultadosSnip").classList.remove("running");
-  document.getElementById("resultadosSnip").classList.remove("disabled");
-  document.getElementById("resultadosSnip").disabled = false;
-
-  if(result.success) {
-    alertWithRedirect('', result.hash, '/resultados/new');
-  } else {
-    alertBox('Error', result.message)
-  }
-}
-
-const loginForm = document.getElementById('loginForm') ;
-if(loginForm !== null) {
-  loginForm.addEventListener('submit', userLogin, false);
-}
-
-async function userLogin(e) {
-  e.preventDefault();
-
-  document.getElementById("submitLogin").classList.add("running");
-  document.getElementById("submitLogin").classList.add("disabled");
-  document.getElementById("submitLogin").disabled = true;
-
-  console.log('Before userRegistrion()');
-  const result = await userRegistration();
-  console.log('After userRegistrion()');
-
-  document.getElementById("submitLogin").classList.remove("running");
-  document.getElementById("submitLogin").classList.remove("disabled");
-  document.getElementById("submitLogin").disabled = false;
-
-  if(result.success) {
-    document.getElementById('password').value = result.payload.name;
-    this.submit();
-  } else {
-    alertBox('Error', result.message)
-  }
-}
+/////////////////////////////////////////////////////////////////////////// 
+// CONTRACT FUNCTION
+///////////////////////////////////////////////////////////////////////////
 
 async function aeternityClient(keypair) {
   try {
@@ -405,6 +263,215 @@ async function addPerson(caseNumber, personalData) {
   }
 }
 
+async function getTotalUser() {
+  try {
+    const contract = await getContract();
+    const result = await contract.methods.get_total_users();
+
+    console.log(result);
+    return {
+      success: true,
+      payload: result.decodedResult
+    }
+  } catch (e) {
+    console.log(e.decodedError);    
+    return {
+      success: false,
+      message: e.decodedError
+    }
+  }
+}
+
+async function getTotalHumans() {
+  try {
+    const contract = await getContract();
+    const result = await contract.methods.get_total_humans();
+
+    console.log(result);
+    return {
+      success: true,
+      payload: result.decodedResult
+    }
+  } catch (e) {
+    console.log(e.decodedError);    
+    return {
+      success: false,
+      message: e.decodedError
+    }
+  }
+}
+
+async function getTotalSample() {
+  try {
+    const contract = await getContract();
+    const result = await contract.methods.get_total_registered_samples();
+
+    console.log(result);
+    return {
+      success: true,
+      payload: result.decodedResult
+    }
+  } catch (e) {
+    console.log(e.decodedError);    
+    return {
+      success: false,
+      message: e.decodedError
+    }
+  }
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////// 
+// FORM ACTIONS
+///////////////////////////////////////////////////////////////////////////
+
+const snipFormCoincidencias = document.getElementById('snipFormCoincidencias');
+if (snipFormCoincidencias) {
+  snipFormCoincidencias.addEventListener('submit', coincidenciasSnip, false);
+}
+
+const strFormCoincidencias = document.getElementById('strFormCoincidencias');
+if (strFormCoincidencias) {
+  strFormCoincidencias.addEventListener('submit', coincidenciasStr, false);
+}
+
+async function coincidenciasStr(e) {
+  e.preventDefault();
+  const strObjects = [];
+
+  for (let i = 1; i < 21; i++) {
+    const marcador = document.getElementsByName(`marcador[${i}][]`)
+    marcadorArr = []
+    marcador.forEach((e) => marcadorArr.push(e.value))
+    strObjects.push(marcadorArr);
+  }
+  document.getElementById("consultarCoincidenciasStr").classList.add("running");
+  document.getElementById("consultarCoincidenciasStr").classList.add("disabled");
+  document.getElementById("consultarCoincidenciasStr").disabled = true;
+
+  const result = await matchStr(strObjects);
+
+  document.getElementById("consultarCoincidenciasStr").classList.remove("running");
+  document.getElementById("consultarCoincidenciasStr").classList.remove("disabled");
+  document.getElementById("consultarCoincidenciasStr").disabled = false;
+
+
+  if (result.success) {
+    const tbody = document.getElementById('resultsTabe').getElementsByTagName('tbody')[0];
+    result.payload.forEach(e => {
+      const newRow = tbody.insertRow();
+
+      const cell = newRow.insertCell(0);
+      cell.innerHTML = e.case_number;
+      return;
+    })
+
+    $('#modal').modal('toggle')
+
+    $('#modal').on('hidden.bs.modal', function (e) {
+      window.location.href = '/coincidencias/find';
+    })
+  } else {
+    alertBox('Error', result.message)
+  }
+}
+
+async function coincidenciasSnip(e) {
+  e.preventDefault();
+  let array = [];
+  
+  document.getElementsByName('marcadores[]').forEach((e) => {
+    array.push(e.value);
+  });
+  document.getElementById("consultarCoincidenciasSnip").classList.add("running");
+  document.getElementById("consultarCoincidenciasSnip").classList.add("disabled");
+  document.getElementById("consultarCoincidenciasSnip").disabled = true;
+  
+  let result = await matchSnp(array);
+
+  document.getElementById("consultarCoincidenciasSnip").classList.remove("running");
+  document.getElementById("consultarCoincidenciasSnip").classList.remove("disabled");
+  document.getElementById("consultarCoincidenciasSnip").disabled = false;
+
+  if(result.success) {
+    const tbody = document.getElementById('resultsTabe').getElementsByTagName('tbody')[0];
+    result.payload.forEach(e => {
+      const newRow = tbody.insertRow();
+
+      const cell = newRow.insertCell(0);
+      cell.innerHTML = e.case_number;
+      return;
+    })
+    
+    $('#modal').modal('toggle')
+
+    $('#modal').on('hidden.bs.modal', function (e) {
+      window.location.href = '/coincidencias/find';
+    })
+  } else {
+    alertBox('Error', result.message)
+  }
+}
+
+const snipForm = document.getElementById('snipForm')
+if (snipForm) {
+  snipForm.addEventListener('submit', resultadosSnip, false);
+}
+
+async function resultadosSnip(e) {
+  e.preventDefault();
+  const caseNumber = document.getElementsByName('caseNumber')[0].value;
+  let array = [];
+  
+  document.getElementsByName('marcadores[]').forEach((e) => {
+    array.push(e.value);
+  });
+  document.getElementById("resultadosSnip").classList.add("running");
+  document.getElementById("resultadosSnip").classList.add("disabled");
+  document.getElementById("resultadosSnip").disabled = true;
+  
+  let result = await addSnp(caseNumber, array);
+  
+  document.getElementById("resultadosSnip").classList.remove("running");
+  document.getElementById("resultadosSnip").classList.remove("disabled");
+  document.getElementById("resultadosSnip").disabled = false;
+
+  if(result.success) {
+    alertWithRedirect('', result.hash, '/resultados/new');
+  } else {
+    alertBox('Error', result.message)
+  }
+}
+
+const loginForm = document.getElementById('loginForm') ;
+if(loginForm !== null) {
+  loginForm.addEventListener('submit', userLogin, false);
+}
+
+async function userLogin(e) {
+  e.preventDefault();
+
+  document.getElementById("submitLogin").classList.add("running");
+  document.getElementById("submitLogin").classList.add("disabled");
+  document.getElementById("submitLogin").disabled = true;
+
+  console.log('Before userRegistrion()');
+  const result = await userRegistration();
+  console.log('After userRegistrion()');
+
+  document.getElementById("submitLogin").classList.remove("running");
+  document.getElementById("submitLogin").classList.remove("disabled");
+  document.getElementById("submitLogin").disabled = false;
+
+  if(result.success) {
+    document.getElementById('password').value = result.payload.name;
+    this.submit();
+  } else {
+    alertBox('Error', result.message)
+  }
+}
+
 class PersonalData {
   constructor(caseNumber, name, lastName, documentID, registryCountry, identityCountry){
     this.case_number = caseNumber,
@@ -528,6 +595,10 @@ async function addSrtResult(e){
     alertBox('Error', result.message);
   }
 }
+
+/////////////////////////////////////////////////////////////////////////// 
+// COMMON FUNCTIONS
+///////////////////////////////////////////////////////////////////////////
 
 function alertBox(title, body, callback){
   body = body == undefined ? 'Hubo un error. Por favor intente nuevamente más tarde.' : body;

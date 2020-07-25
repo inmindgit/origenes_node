@@ -56,6 +56,7 @@ contract FreedomOrigins =
     | AddDNASample(string)
     | FoundDNAMatch(string)
     | Login(address)
+    | DNAMatchQuery(address)
   
   record state = {
          active_contract:bool,
@@ -97,6 +98,9 @@ contract FreedomOrigins =
     if(Call.caller!=Contract.creator)
       require(Map.member(Call.caller,state.platform_users),"not allowed")
       require(state.platform_users[Call.caller].profile.name=="Viewer","not allowed")
+
+  function isOwner() =
+    require (Call.caller==Contract.creator,"Not allowed")
   
   stateful entrypoint init()={active_contract=true, profiles={[1] = {id=1,name="Admin"},[2] = {id=2,name="Operator"},[3] = {id=3,name="Lab"},[4] = {id=4,name="Viewer"}},
     systems = {[1]={id=1,name="SNP"},[2]={id=2,name="STR"}},
@@ -129,7 +133,7 @@ contract FreedomOrigins =
     Chain.event(AddDNASample(case_number))
     true
 
-  entrypoint ask_for_sample_dna_test(document_id:string) : string = 
+  stateful entrypoint ask_for_sample_dna_test(document_id:string) : string = 
     isOperator()
     let human = get_human_by_id(document_id)
     switch (human)
@@ -206,25 +210,41 @@ contract FreedomOrigins =
           try_to_find_str(str,tail)
       []=>[]
     
-  entrypoint look_for_match(sample_to_find_match:dNA_Sample):list(human) = 
+  stateful entrypoint look_for_match(sample_to_find_match:dNA_Sample):list(human) = 
     isOperator()
     isViewer()
+    Chain.event(DNAMatchQuery(Call.caller))
     switch(sample_to_find_match.system.name)
       "SNP" => try_to_find_snp(sample_to_find_match.analysis.snp_result,state.lhumans)
       "STR" => try_to_find_str(sample_to_find_match.analysis.str_result,state.lhumans)
   
-  entrypoint user_registration(): platformUser =
+  stateful entrypoint user_registration(): platformUser =
     isAuthorized()
     Chain.event(Login(Call.caller))
     state.platform_users[Call.caller]
 
   entrypoint get_humansl():list(human) = 
+    isOwner()
     state.lhumans
   
   entrypoint get_humansm():map(string,human) =
+    isOwner()
     state.humans
   entrypoint get_dna_samples():map(string,dNA_Sample) =
+    isOwner()
     state.dna_samples
 
   entrypoint get_users():map(address,platformUser) = 
+    isOwner()
     state.platform_users
+
+  entrypoint get_total_users():int =
+    Map.size(state.platform_users)
+
+  entrypoint get_total_humans():int = 
+    Map.size(state.humans)
+  entrypoint get_total_registered_samples():int =
+    Map.size(state.dna_samples)
+    
+    //agregar un get user que solo el dueño de la muestra pueda recuperar junto con su address
+    //agregar qeu cuando se hace una busqeuda y hay un match se guarde en la lista de coincidencias? capaz con parameetro especial
