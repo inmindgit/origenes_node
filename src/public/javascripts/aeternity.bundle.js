@@ -20,8 +20,6 @@ if (strFormCoincidencias) {
 
 async function coincidenciasStr(e) {
   e.preventDefault();
-
-  const caseNumber = document.getElementById('caseNumber').value;
   const strObjects = [];
 
   for (let i = 1; i < 21; i++) {
@@ -34,7 +32,7 @@ async function coincidenciasStr(e) {
   document.getElementById("consultarCoincidenciasStr").classList.add("disabled");
   document.getElementById("consultarCoincidenciasStr").disabled = true;
 
-  const result = await matchStr(caseNumber, strObjects);
+  const result = await matchStr(strObjects);
 
   document.getElementById("consultarCoincidenciasStr").classList.remove("running");
   document.getElementById("consultarCoincidenciasStr").classList.remove("disabled");
@@ -57,13 +55,13 @@ async function coincidenciasStr(e) {
       window.location.href = '/coincidencias/find';
     })
   } else {
-    alert(`Error: ${result.message}`);
+    alertBox('Error', result.message)
   }
 }
 
 async function coincidenciasSnip(e) {
   e.preventDefault();
-  const caseNumber = document.getElementsByName('caseNumber')[0].value;
+  // const caseNumber = document.getElementsByName('caseNumber')[0].value;
   let array = [];
   
   document.getElementsByName('marcadores[]').forEach((e) => {
@@ -73,7 +71,7 @@ async function coincidenciasSnip(e) {
   document.getElementById("consultarCoincidenciasSnip").classList.add("disabled");
   document.getElementById("consultarCoincidenciasSnip").disabled = true;
   
-  let result = await matchSnp(caseNumber, array);
+  let result = await matchSnp(array);
 
   document.getElementById("consultarCoincidenciasSnip").classList.remove("running");
   document.getElementById("consultarCoincidenciasSnip").classList.remove("disabled");
@@ -95,7 +93,7 @@ async function coincidenciasSnip(e) {
       window.location.href = '/coincidencias/find';
     })
   } else {
-    alert(`Error: ${result.message}`)
+    alertBox('Error', result.message)
   }
 }
 
@@ -199,7 +197,7 @@ async function getContract() {
   }
 }
 
-async function matchStr(caseNumber, strArray) {
+async function matchStr(strArray) {
   try {
     const strArrayObjects = strArray.map((e) => {
       return {
@@ -215,7 +213,7 @@ async function matchStr(caseNumber, strArray) {
       },
       analysis: {
         doneDate: new Date().toISOString(),
-        case_number: caseNumber,
+        case_number: 'not_need_for_this_method',
         snp_result: [],
         str_result: strArrayObjects
       }
@@ -238,7 +236,7 @@ async function matchStr(caseNumber, strArray) {
   }
 }
 
-async function matchSnp(caseNumber, snpArray) {
+async function matchSnp(snpArray) {
   try {
     const dnaSample = {
       system: {
@@ -247,7 +245,7 @@ async function matchSnp(caseNumber, snpArray) {
       },
       analysis: {
         doneDate: new Date().toISOString(),
-        case_number: caseNumber,
+        case_number: 'not_need_for_this_method',
         snp_result: snpArray,
         str_result: []
       }
@@ -257,6 +255,9 @@ async function matchSnp(caseNumber, snpArray) {
     const contract = await getContract();
     const result = await contract.methods.look_for_match(dnaSample);
     
+    console.log(result);
+
+
     return {
       success: true,
       payload: result.decodedResult

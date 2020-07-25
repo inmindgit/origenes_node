@@ -6,15 +6,15 @@ block content
       div.row.mb-2
         div.col-sm-12
           h1= title
-      if locals.message
-        if message.error
-          div(class="alert alert-danger" role="alert")
-            strong Ha ocurrido un error al procesar la transacción:
-            p Mensaje de error: #{message.error}
-        if message.success
-          div(class="alert alert-success" role="alert")
-            strong Transacción realizada con éxito
-            p= message.success
+      //- if locals.message
+      //-   if message.error
+      //-     div(class="alert alert-danger" role="alert")
+      //-       strong Ha ocurrido un error al procesar la transacción:
+      //-       p Mensaje de error: #{message.error}
+      //-   if message.success
+      //-     div(class="alert alert-success" role="alert")
+      //-       strong Transacción realizada con éxito
+      //-       p= message.success
       
       .content
         //- .row
@@ -40,7 +40,7 @@ block content
                 form(action="/coincidencias/snp", method="post", class="", id="snipFormCoincidencias")
                   .card
                     .card-body
-                      include ../resultados/snip.pug
+                      include snip.pug
                     .card-footer
                       button(type="submit" id="consultarCoincidenciasSnip" class="btn btn-primary float-right ld-ext-right") Consultar
                         .ld.ld-ring.ld-spin
@@ -51,7 +51,7 @@ block content
                     .card-body
                       .row
                         .col-12
-                          include ../resultados/str.pug
+                          include str.pug
                     .card-footer
                       button(type="submit" id="consultarCoincidenciasStr" class="btn btn-primary float-right ld-ext-right") Consultar
                         .ld.ld-ring.ld-spin

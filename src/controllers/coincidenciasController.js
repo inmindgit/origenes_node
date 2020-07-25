@@ -5,7 +5,7 @@ module.exports = {
   async find(req, res) {
     res.locals.message = req.flash()
     return res.render('coincidencias/find', {
-      title: 'Buscar muestras',
+      title: 'Buscar coincidencias',
       currentUser: req.user
     });
   },
