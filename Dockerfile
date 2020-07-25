@@ -1,6 +1,6 @@
 FROM node:13.10
 
-RUN npm install -g nodemon
+RUN npm install -g nodemon browserify
 
 WORKDIR /app
 
