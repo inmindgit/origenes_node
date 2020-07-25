@@ -111,6 +111,13 @@ contract FreedomOrigins =
     platform_users={},
     dna_samples={}}
 
+  stateful entrypoint test_init() = 
+    isOwner()
+    add_user("mail1@mail.com","Admin",1,ak_2AKzXHEE3bA4s74B1RHj4N1n5tDaNt5rQEruttKSkd8JhhKs6U)
+    add_user("mail2@mail.com","Lab",1,ak_22QpWFkBYWBhALduLpr4ZVQ7xMCDB8sF6KN63DrzGtcBniXTha)
+    add_user("mail3@mail.com","Operator",1,ak_r96z4YiSFuP5r2rHHJTisCq4puffNCrrPvXSbFgqxHgMf6RHr)
+    add_user("mail4@mail.com","Viewer",1,ak_uhxgm72mR1JfuKN3VgZAk4EdmgYj7XEBganik3FRMKXazDkLP)
+
 
   function get_human_by_id(document_id_to_find:string) : option(human) =
     switch(Map.lookup(document_id_to_find,state.personal_datas))
@@ -155,32 +162,34 @@ contract FreedomOrigins =
 
   function there_is_match_str(str1:list(sTRIndicator),str2:list(sTRIndicator),fail_count:int): bool =
       if (fail_count==3)
-        abort("there is no match")
-      switch(str1)
-        [] => fail_count<3
-        x::tail=>
-          switch(str2)
-            [] => fail_count<3
-            y::ytail => 
-              if(!(x.value2==y.value1||x.value1==y.value2||x.value1==y.value1||x.value2==y.value2))
-                there_is_match_str(tail,ytail,fail_count+1)
-              else
-                there_is_match_str(tail,ytail,fail_count)
+        false
+      else
+        switch(str1)
+          [] => fail_count<3
+          x::tail=>
+            switch(str2)
+              [] => fail_count<3
+              y::ytail => 
+                if(!(x.value2==y.value1||x.value1==y.value2||x.value1==y.value1||x.value2==y.value2))
+                  there_is_match_str(tail,ytail,fail_count+1)
+                else
+                  there_is_match_str(tail,ytail,fail_count)
 
   function there_is_match_snp(snp1:list(string),snp2:list(string),fail_count:int): bool =
     if (fail_count==4)
-      abort("there is no match")
-    switch(snp1)
-      [] => fail_count<4
-      x::tail=>
-        switch(snp2)
-          [] => fail_count<4
-          y::ytail => 
-            if(x!=y&&(x!="10"&&y=="01"||y=="10"&&x!="01"))
-              there_is_match_snp(tail,ytail,fail_count+1)
-            else
-              there_is_match_snp(tail,ytail,fail_count)
-              
+      false
+    else
+      switch(snp1)
+        [] => fail_count<4
+        x::tail=>
+          switch(snp2)
+            [] => fail_count<4
+            y::ytail => 
+              if(x!=y&&(x!="10"&&y=="01"||y=="10"&&x!="01"))
+                there_is_match_snp(tail,ytail,fail_count+1)
+              else
+                there_is_match_snp(tail,ytail,fail_count)
+                
   function get_snp_dna_by_case_number(case_number:string):list(string) =
     switch(Map.member(case_number,state.dna_samples))
       false => []
@@ -210,10 +219,9 @@ contract FreedomOrigins =
           try_to_find_str(str,tail)
       []=>[]
     
-  stateful entrypoint look_for_match(sample_to_find_match:dNA_Sample):list(human) = 
+  entrypoint look_for_match(sample_to_find_match:dNA_Sample):list(human) = 
     isOperator()
     isViewer()
-    Chain.event(DNAMatchQuery(Call.caller))
     switch(sample_to_find_match.system.name)
       "SNP" => try_to_find_snp(sample_to_find_match.analysis.snp_result,state.lhumans)
       "STR" => try_to_find_str(sample_to_find_match.analysis.str_result,state.lhumans)
@@ -245,6 +253,12 @@ contract FreedomOrigins =
     Map.size(state.humans)
   entrypoint get_total_registered_samples():int =
     Map.size(state.dna_samples)
-    
+  entrypoint get_human_by_case_number(case_number:string):human = 
+    isOwner()
+    state.humans[case_number]
+
+  entrypoint get_human_dna_by_case_number(case_number:string):dNA_Analysis = 
+    isOwner()
+    state.dna_samples[case_number].analysis
     //agregar un get user que solo el dueño de la muestra pueda recuperar junto con su address
     //agregar qeu cuando se hace una busqeuda y hay un match se guarde en la lista de coincidencias? capaz con parameetro especial
