@@ -264,7 +264,7 @@ async function addPerson(caseNumber, personalData) {
   }
 }
 
-async function getTotalUser() {
+async function getTotalUsers() {
   try {
     const contract = await getContract();
     const result = await contract.methods.get_total_users();
@@ -275,10 +275,10 @@ async function getTotalUser() {
       payload: result.decodedResult
     }
   } catch (e) {
-    console.log(e.decodedError);    
     return {
       success: false,
-      message: e.decodedError
+      message: "?",
+      hash: "0"
     }
   }
 }
@@ -297,12 +297,13 @@ async function getTotalHumans() {
     console.log(e.decodedError);    
     return {
       success: false,
-      message: e.decodedError
+      message: e.decodedError,
+      hash: "0"
     }
   }
 }
 
-async function getTotalSample() {
+async function getTotalSamples() {
   try {
     const contract = await getContract();
     const result = await contract.methods.get_total_registered_samples();
@@ -316,7 +317,8 @@ async function getTotalSample() {
     console.log(e.decodedError);    
     return {
       success: false,
-      message: e.decodedError
+      message: e.decodedError,
+      hash: "0"
     }
   }
 }
@@ -326,6 +328,58 @@ async function getTotalSample() {
 /////////////////////////////////////////////////////////////////////////// 
 // FORM ACTIONS
 ///////////////////////////////////////////////////////////////////////////
+
+
+const refreshTotalSamples = document.getElementById('refresh-total-samples');
+if (refreshTotalSamples) {
+  refreshTotalSamples.addEventListener("click", async function(){
+    this.children[0].classList.add('fa-spin')
+    const result = await getTotalSamples();
+    
+    console.log(result);
+    
+    if (result.success) {
+      this.remove()
+      document.getElementById('total-sample-text').innerText = result.payload
+    }else{
+      this.children[0].classList.remove('fa-spin')
+    }
+  });
+}
+
+const refreshTotalHumans = document.getElementById('refresh-total-humans');
+if (refreshTotalHumans) {
+  refreshTotalHumans.addEventListener("click", async function(){
+    this.children[0].classList.add('fa-spin')
+    const result = await getTotalHumans();
+    
+    console.log(result);
+    
+    if (result.success) {
+      this.remove()
+      document.getElementById('total-humans-text').innerText = result.payload
+    }else{
+      this.children[0].classList.remove('fa-spin')
+    }
+  });
+}
+
+const refreshTotalUsers = document.getElementById('refresh-total-users');
+if (refreshTotalUsers) {
+  refreshTotalUsers.addEventListener("click", async function(){
+    this.children[0].classList.add('fa-spin')
+    const result = await getTotalUsers();
+    
+    console.log(result);
+    
+    if (result.success) {
+      this.remove()
+      document.getElementById('total-users-text').innerText = result.payload
+    }else{
+      this.children[0].classList.remove('fa-spin')
+    }
+  });
+}
 
 const snipFormCoincidencias = document.getElementById('snipFormCoincidencias');
 if (snipFormCoincidencias) {
