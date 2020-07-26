@@ -41,7 +41,7 @@ async function getContract() {
       throw 'No posee el par de claves para el acceso.';
     }
 
-    const contractSource = "contract FreedomOrigins =\n  record file_Storage = {\n         file_storage_id:int,\n         name:int,\n         finget_print:hash}\n         \n  record human = {\n      personal_data:personal_Data,\n      case_number:string}\n      \n  record personal_Data = {\n      case_number:string,\n      document_id:string,\n      registry_country:string,\n      identity_country:string,\n      name:string,\n      last_name:string,\n      address:string,\n      phone_number:string,\n      email:string,\n      contact:string}\n\n  record platformUser = {\n      user_name:string,\n      email:string,\n      profile:profile,\n      unique_address:address}\n\n  record dNA_Analysis = {\n      doneDate:string,\n      case_number:string,\n      snp_result:list(string),\n      str_result:list(sTRIndicator)}\n\n  record dNA_Sample = {\n      system:system,\n      analysis:dNA_Analysis}\n      \n  record sTRIndicator = {\n      name:string,\n      value1:int,\n      value2:int}\n  \n  record system = {\n      id:int,\n      name:string} //Snip o STR\n\n  record profile = {\n      id:int,\n      name:string}\n\n  datatype event = //tbc\n      AddUser(string)\n    | AddHuman(string)\n    | AskForDNASample(string)\n    | AddDNASample(string)\n    | FoundDNAMatch(string)\n    | Login(address)\n    | DNAMatchQuery(address)\n  \n  record state = {\n         active_contract:bool,\n         profiles:map(int, profile),\n         systems : map(int,system),\n         files:map(int,file_Storage),\n         humans:map(string, human), //case_number\n         lhumans:list(human),\n         personal_datas:map(string,personal_Data), //document id\n         platform_users:map(address,platformUser),\n         dna_samples:map(string,dNA_Sample)} //case_number\n\n  entrypoint version() : int = 1\n\n  stateful entrypoint kill_contract(are_you_sure:string) = \n    require (Call.caller==Contract.creator,\"Not allowed\")\n    require (are_you_sure == \"yes\",\"Check your confirmation\")\n    put(state{active_contract=false})\n  \n  function isAuthorized() =\n    require(Map.member(Call.caller,state.platform_users),\"not allowed\")\n    \n  function isAdmin() =\n    if(Call.caller!=Contract.creator)\n      require(Map.member(Call.caller,state.platform_users),\"not allowed\")\n      require(state.platform_users[Call.caller].profile.name==\"Admin\",\"not allowed\")\n\n  function isOperator() =\n    if(Call.caller!=Contract.creator)\n      require(Map.member(Call.caller,state.platform_users),\"not allowed\")\n      require(state.platform_users[Call.caller].profile.name==\"Operator\",\"not allowed\")\n\n  function isLab() =\n    if(Call.caller!=Contract.creator)\n      require(Map.member(Call.caller,state.platform_users),\"not allowed\")\n      require(state.platform_users[Call.caller].profile.name==\"Lab\",\"not allowed\")\n\n  function isViewer() =\n    if(Call.caller!=Contract.creator)\n      if (state.platform_users[Call.caller].profile.name!=\"Operator\")\n        require(Map.member(Call.caller,state.platform_users),\"not allowed\")\n        require(state.platform_users[Call.caller].profile.name==\"Viewer\",\"not allowed\")\n\n  function isOwner() =\n    require (Call.caller==Contract.creator,\"Not allowed\")\n  \n  stateful entrypoint init()={active_contract=true, profiles={[1] = {id=1,name=\"Admin\"},[2] = {id=2,name=\"Operator\"},[3] = {id=3,name=\"Lab\"},[4] = {id=4,name=\"Viewer\"}},\n    systems = {[1]={id=1,name=\"SNP\"},[2]={id=2,name=\"STR\"}},\n    files={},\n    humans={},\n    lhumans=[],\n    personal_datas={},\n    platform_users={},\n    dna_samples={}}\n\n  stateful entrypoint test_init() = \n    isOwner()\n    add_user(\"mail1@mail.com\",\"Admin\",1,ak_2AKzXHEE3bA4s74B1RHj4N1n5tDaNt5rQEruttKSkd8JhhKs6U)\n    add_user(\"mail2@mail.com\",\"Lab\",3,ak_22QpWFkBYWBhALduLpr4ZVQ7xMCDB8sF6KN63DrzGtcBniXTha)\n    add_user(\"mail3@mail.com\",\"Operator\",2,ak_r96z4YiSFuP5r2rHHJTisCq4puffNCrrPvXSbFgqxHgMf6RHr)\n    add_user(\"mail4@mail.com\",\"Viewer\",4,ak_uhxgm72mR1JfuKN3VgZAk4EdmgYj7XEBganik3FRMKXazDkLP)\n\n\n  function get_human_by_id(document_id_to_find:string) : option(human) =\n    switch(Map.lookup(document_id_to_find,state.personal_datas))\n      None=>abort(\"doesn't exist\")\n      Some(personal_data)=>Map.lookup(personal_data.case_number,state.humans)\n\n  stateful entrypoint add_human(case_number:string, human_to_add:human, personal_data_to_add:personal_Data) = \n    isOperator()\n    require(!Map.member(case_number,state.humans),\"already exist\")\n    put(state{humans[case_number]=human_to_add})\n    put(state{personal_datas[personal_data_to_add.document_id]=personal_data_to_add})\n    put(state{lhumans=human_to_add::state.lhumans})\n    Chain.event(AddHuman(case_number))\n    true\n\n  stateful entrypoint add_dna_sample(sample_to_add:dNA_Sample,case_number:string) =\n    isLab()\n    require(Map.member(case_number,state.humans),\"doesn't exist\")\n    put(state{dna_samples[case_number]=sample_to_add})\n    Chain.event(AddDNASample(case_number))\n    true\n\n  stateful entrypoint ask_for_sample_dna_test(document_id:string) : string = \n    isOperator()\n    let human = get_human_by_id(document_id)\n    switch (human)\n      None=>abort(\"doesn't exist\")\n      Some(human)=>\n        Chain.event(AskForDNASample(human.case_number)) \n        human.case_number\n                \n\n\n  stateful entrypoint add_user(email_to_add:string, name_to_add:string, profile_id:int, address_to_add:address) = \n    isAdmin()\n    require(Map.member(profile_id,state.profiles),\"doesn't exist\")\n    let profile=state.profiles[profile_id]\n    let platform_user_to_add =  {user_name=email_to_add, email= email_to_add, profile=profile, unique_address=address_to_add}\n    put(state{platform_users[address_to_add]=platform_user_to_add})\n    Chain.event(AddUser(email_to_add))     \n    true\n\n  function there_is_match_str(str1:list(sTRIndicator),str2:list(sTRIndicator),fail_count:int): bool =\n      if (fail_count==3)\n        false\n      else\n        switch(str1)\n          [] => fail_count<3\n          x::tail=>\n            switch(str2)\n              [] => fail_count<3\n              y::ytail => \n                if(!(x.value2==y.value1||x.value1==y.value2||x.value1==y.value1||x.value2==y.value2))\n                  there_is_match_str(tail,ytail,fail_count+1)\n                else\n                  there_is_match_str(tail,ytail,fail_count)\n\n  function there_is_match_snp(snp1:list(string),snp2:list(string),fail_count:int): bool =\n    if (fail_count==4)\n      false\n    else\n      switch(snp1)\n        [] => fail_count<4\n        x::tail=>\n          switch(snp2)\n            [] => fail_count<4\n            y::ytail => \n              if(x!=y&&(x!=\"10\"&&y==\"01\"||y==\"10\"&&x!=\"01\"))\n                there_is_match_snp(tail,ytail,fail_count+1)\n              else\n                there_is_match_snp(tail,ytail,fail_count)\n                \n  function get_snp_dna_by_case_number(case_number:string):list(string) =\n    switch(Map.member(case_number,state.dna_samples))\n      false => []\n      true => state.dna_samples[case_number].analysis.snp_result\n  \n  function get_str_dna_by_case_number(case_number:string):list(sTRIndicator) =\n    switch(Map.member(case_number,state.dna_samples))\n      false => []\n      true => state.dna_samples[case_number].analysis.str_result\n    \n\n  function try_to_find_snp(snp:list(string), humans_universe:list(human)) : list(human) = \n    switch(humans_universe)\n      x::tail => \n        if(there_is_match_snp(snp,get_snp_dna_by_case_number(x.case_number),0))\n          x::try_to_find_snp(snp,tail)\n        else\n          try_to_find_snp(snp,tail)\n      []=>[]\n\n  function try_to_find_str(str:list(sTRIndicator), humans_universe:list(human)) : list(human) = \n    switch(humans_universe)\n      x::tail => \n        if(there_is_match_str(str,get_str_dna_by_case_number(x.case_number),0))\n          x::try_to_find_str(str,tail)\n        else\n          try_to_find_str(str,tail)\n      []=>[]\n    \n  entrypoint look_for_match(sample_to_find_match:dNA_Sample):list(human) = \n    isOperator()\n    isViewer()\n    switch(sample_to_find_match.system.name)\n      \"SNP\" => try_to_find_snp(sample_to_find_match.analysis.snp_result,state.lhumans)\n      \"STR\" => try_to_find_str(sample_to_find_match.analysis.str_result,state.lhumans)\n  \n  stateful entrypoint user_registration(): platformUser =\n    isAuthorized()\n    Chain.event(Login(Call.caller))\n    state.platform_users[Call.caller]\n\n  entrypoint get_humansl():list(human) = \n    isOwner()\n    state.lhumans\n  \n  entrypoint get_humansm():map(string,human) =\n    isOwner()\n    state.humans\n  entrypoint get_dna_samples():map(string,dNA_Sample) =\n    isOwner()\n    state.dna_samples\n\n  entrypoint get_users():map(address,platformUser) = \n    isOwner()\n    state.platform_users\n\n  entrypoint get_total_users():int =\n    Map.size(state.platform_users)\n\n  entrypoint get_total_humans():int = \n    Map.size(state.humans)\n  entrypoint get_total_registered_samples():int =\n    Map.size(state.dna_samples)\n  entrypoint get_human_by_case_number(case_number:string):human = \n    isOwner()\n    state.humans[case_number]\n\n  entrypoint get_human_dna_by_case_number(case_number:string):dNA_Analysis = \n    isOwner()\n    state.dna_samples[case_number].analysis\n    //agregar un get user que solo el dueño de la muestra pueda recuperar junto con su address\n    //agregar qeu cuando se hace una busqeuda y hay un match se guarde en la lista de coincidencias? capaz con parameetro especial";
+    const contractSource = "include \"List.aes\"\ncontract FreedomOrigins =\n  record file_Storage = {\n         file_storage_id:int,\n         name:int,\n         finget_print:hash}\n         \n  record human = {\n      personal_data:personal_Data,\n      case_number:string}\n      \n  record personal_Data = {\n      case_number:string,\n      document_id:string,\n      registry_country:string,\n      identity_country:string,\n      name:string,\n      last_name:string,\n      address:string,\n      phone_number:string,\n      email:string,\n      contact:string}\n\n  record platformUser = {\n      user_name:string,\n      email:string,\n      profile:profile,\n      unique_address:address}\n\n  record dNA_Analysis = {\n      doneDate:string,\n      case_number:string,\n      snp_result:list(string),\n      str_result:list(sTRIndicator)}\n\n  record dNA_Sample = {\n      system:system,\n      analysis:dNA_Analysis}\n      \n  record sTRIndicator = {\n      name:string,\n      value1:int,\n      value2:int}\n  \n  record system = {\n      id:int,\n      name:string} //Snip o STR\n\n  record profile = {\n      id:int,\n      name:string}\n\n  datatype event = //tbc\n      AddUser(string)\n    | AddHuman(string)\n    | AskForDNASample(string)\n    | AddDNASample(string)\n    | FoundDNAMatch(string)\n    | Login(address)\n    | DNAMatchQuery(address)\n  \n  record state = {\n         active_contract:bool,\n         profiles:map(int, profile),\n         systems : map(int,system),\n         files:map(int,file_Storage),\n         humans:map(string, human), //case_number\n         lhumans:list(human),\n         personal_datas:map(string,personal_Data), //document id\n         platform_users:map(address,platformUser),\n         dna_samples:map(string,dNA_Sample)} //case_number\n\n  entrypoint version() : int = 1\n\n  stateful entrypoint kill_contract(are_you_sure:string) = \n    require (Call.caller==Contract.creator,\"Not allowed\")\n    require (are_you_sure == \"yes\",\"Check your confirmation\")\n    put(state{active_contract=false})\n  \n  function isAuthorized() =\n    require(Map.member(Call.caller,state.platform_users),\"not allowed\")\n    \n  function isAdmin() =\n    if(Call.caller!=Contract.creator)\n      require(Map.member(Call.caller,state.platform_users),\"not allowed\")\n      require(state.platform_users[Call.caller].profile.name==\"Admin\",\"not allowed\")\n\n  function isOperator() =\n    if(Call.caller!=Contract.creator)\n      require(Map.member(Call.caller,state.platform_users),\"not allowed\")\n      require(state.platform_users[Call.caller].profile.name==\"Operator\",\"not allowed\")\n\n  function isLab() =\n    if(Call.caller!=Contract.creator)\n      require(Map.member(Call.caller,state.platform_users),\"not allowed\")\n      require(state.platform_users[Call.caller].profile.name==\"Lab\",\"not allowed\")\n\n  function isViewer() =\n    if(Call.caller!=Contract.creator)\n      if (state.platform_users[Call.caller].profile.name!=\"Operator\")\n        require(Map.member(Call.caller,state.platform_users),\"not allowed\")\n        require(state.platform_users[Call.caller].profile.name==\"Viewer\",\"not allowed\")\n\n  function isOwner() =\n    require (Call.caller==Contract.creator,\"Not allowed\")\n  \n  stateful entrypoint init()={active_contract=true, profiles={[1] = {id=1,name=\"Admin\"},[2] = {id=2,name=\"Operator\"},[3] = {id=3,name=\"Lab\"},[4] = {id=4,name=\"Viewer\"}},\n    systems = {[1]={id=1,name=\"SNP\"},[2]={id=2,name=\"STR\"}},\n    files={},\n    humans={},\n    lhumans=[],\n    personal_datas={},\n    platform_users={},\n    dna_samples={}}\n\n  stateful entrypoint test_init() = \n    isOwner()\n    add_user(\"mail1@mail.com\",\"Admin\",1,ak_2AKzXHEE3bA4s74B1RHj4N1n5tDaNt5rQEruttKSkd8JhhKs6U)\n    add_user(\"mail2@mail.com\",\"Lab\",3,ak_22QpWFkBYWBhALduLpr4ZVQ7xMCDB8sF6KN63DrzGtcBniXTha)\n    add_user(\"mail3@mail.com\",\"Operator\",2,ak_r96z4YiSFuP5r2rHHJTisCq4puffNCrrPvXSbFgqxHgMf6RHr)\n    add_user(\"mail4@mail.com\",\"Viewer\",4,ak_uhxgm72mR1JfuKN3VgZAk4EdmgYj7XEBganik3FRMKXazDkLP)\n\n\n  function get_human_by_id(document_id_to_find:string) : option(human) =\n    switch(Map.lookup(document_id_to_find,state.personal_datas))\n      None=>abort(\"doesn't exist\")\n      Some(personal_data)=>Map.lookup(personal_data.case_number,state.humans)\n\n  stateful entrypoint add_human(case_number:string, human_to_add:human, personal_data_to_add:personal_Data) = \n    isOperator()\n    require(!Map.member(case_number,state.humans),\"already exist\")\n    put(state{humans[case_number]=human_to_add})\n    put(state{personal_datas[personal_data_to_add.document_id]=personal_data_to_add})\n    put(state{lhumans=human_to_add::state.lhumans})\n    Chain.event(AddHuman(case_number))\n    true\n\n  stateful entrypoint add_dna_sample(sample_to_add:dNA_Sample,case_number:string) =\n    isLab()\n    require(Map.member(case_number,state.humans),\"doesn't exist\")\n    put(state{dna_samples[case_number]=sample_to_add})\n    Chain.event(AddDNASample(case_number))\n    true\n\n  stateful entrypoint ask_for_sample_dna_test(document_id:string) : string = \n    isOperator()\n    let human = get_human_by_id(document_id)\n    switch (human)\n      None=>abort(\"doesn't exist\")\n      Some(human)=>\n        Chain.event(AskForDNASample(human.case_number)) \n        human.case_number\n                \n\n\n  stateful entrypoint add_user(email_to_add:string, name_to_add:string, profile_id:int, address_to_add:address) = \n    isAdmin()\n    require(Map.member(profile_id,state.profiles),\"doesn't exist\")\n    let profile=state.profiles[profile_id]\n    let platform_user_to_add =  {user_name=email_to_add, email= email_to_add, profile=profile, unique_address=address_to_add}\n    put(state{platform_users[address_to_add]=platform_user_to_add})\n    Chain.event(AddUser(email_to_add))     \n    true\n\n  function there_is_match_str(str1:list(sTRIndicator),str2:list(sTRIndicator),fail_count:int): bool =\n    if (fail_count==3)\n      false\n    else\n      switch(str1)\n        [] => fail_count<3\n        x::tail=>\n          switch(str2)\n            [] => fail_count<3\n            y::ytail => \n              if(!(x.value2==y.value1||x.value1==y.value2||x.value1==y.value1||x.value2==y.value2))\n                there_is_match_str(tail,ytail,fail_count+1)\n              else\n                there_is_match_str(tail,ytail,fail_count)\n\n  function there_is_match_snp(snp1:list(string),snp2:list(string),fail_count:int): bool =\n    if (fail_count==4)\n      false\n    else\n      switch(snp1)\n        [] => fail_count<4\n        x::tail=>\n          switch(snp2)\n            [] => fail_count<4\n            y::ytail => \n              if(x!=y&&(x!=\"10\"&&y==\"01\"||y==\"10\"&&x!=\"01\"))\n                there_is_match_snp(tail,ytail,fail_count+1)\n              else\n                there_is_match_snp(tail,ytail,fail_count)\n                \n  function get_snp_dna_by_case_number(case_number:string):list(string) =\n    switch(Map.member(case_number,state.dna_samples))\n      false => []\n      true => state.dna_samples[case_number].analysis.snp_result\n  \n  function get_str_dna_by_case_number(case_number:string):list(sTRIndicator) =\n    switch(Map.member(case_number,state.dna_samples))\n      false => []\n      true => state.dna_samples[case_number].analysis.str_result\n    \n\n  function try_to_find_snp(snp:list(string), humans_universe:list(human)) : list(human) = \n    switch(humans_universe)\n      x::tail => \n        let dna=get_snp_dna_by_case_number(x.case_number)\n        if(!List.is_empty(dna)) \n          if(there_is_match_snp(snp,get_snp_dna_by_case_number(x.case_number),0))\n            x::try_to_find_snp(snp,tail)\n          else\n            try_to_find_snp(snp,tail)\n        else\n          try_to_find_snp(snp,tail)\n      []=>[]\n\n  function try_to_find_str(str:list(sTRIndicator), humans_universe:list(human)) : list(human) = \n    switch(humans_universe)\n      x::tail =>\n        let dna=get_str_dna_by_case_number(x.case_number)\n        if(!List.is_empty(dna)) \n          if(there_is_match_str(str,dna,0))\n            x::try_to_find_str(str,tail)\n          else\n            try_to_find_str(str,tail)\n        else\n          try_to_find_str(str,tail)\n      []=>[]\n    \n  entrypoint look_for_match(sample_to_find_match:dNA_Sample):list(human) = \n    isOperator()\n    isViewer()\n    switch(sample_to_find_match.system.name)\n      \"SNP\" => try_to_find_snp(sample_to_find_match.analysis.snp_result,state.lhumans)\n      \"STR\" => try_to_find_str(sample_to_find_match.analysis.str_result,state.lhumans)\n  \n  stateful entrypoint user_registration(): platformUser =\n    isAuthorized()\n    Chain.event(Login(Call.caller))\n    state.platform_users[Call.caller]\n\n  entrypoint get_humansl():list(human) = \n    isOwner()\n    state.lhumans\n  \n  entrypoint get_humansm():map(string,human) =\n    isOwner()\n    state.humans\n  entrypoint get_dna_samples():map(string,dNA_Sample) =\n    isOwner()\n    state.dna_samples\n\n  entrypoint get_users():map(address,platformUser) = \n    isOwner()\n    state.platform_users\n\n  entrypoint get_total_users():int =\n    Map.size(state.platform_users)\n\n  entrypoint get_total_humans():int = \n    Map.size(state.humans)\n  entrypoint get_total_registered_samples():int =\n    Map.size(state.dna_samples)\n  entrypoint get_human_by_case_number(case_number:string):human = \n    isOwner()\n    state.humans[case_number]\n\n  entrypoint get_human_dna_by_case_number(case_number:string):dNA_Analysis = \n    isOwner()\n    state.dna_samples[case_number].analysis\n    //agregar un get user que solo el dueño de la muestra pueda recuperar junto con su address\n    //agregar qeu cuando se hace una busqeuda y hay un match se guarde en la lista de coincidencias? capaz con parameetro especial";
     const client = await aeternityClient(keypair);
 
     const contract = await client.getContractInstance(contractSource, {
@@ -59,18 +59,18 @@ async function matchStr(strArray) {
     const strArrayObjects = strArray.map((e) => {
       return {
         name: e[0],
-        value1: e[1],
-        value2: e[2]
+        value1: parseInt(e[1]),
+        value2: parseInt(e[2])
       }
     });
     const dnaSample = {
       system: {
         id: STRID,
-        name: SNP
+        name: STR
       },
       analysis: {
         doneDate: new Date().toISOString(),
-        case_number: 'not_need_for_this_method',
+        case_number: 'caseNumber',
         snp_result: [],
         str_result: strArrayObjects
       }
@@ -79,7 +79,6 @@ async function matchStr(strArray) {
     const contract = await getContract();
     const result = await contract.methods.look_for_match(dnaSample);
 
-    console.log(result);
     return {
       success: true,
       payload: result.decodedResult
@@ -102,18 +101,14 @@ async function matchSnp(snpArray) {
       },
       analysis: {
         doneDate: new Date().toISOString(),
-        case_number: 'not_need_for_this_method',
+        case_number: 'caseNumber',
         snp_result: snpArray,
         str_result: []
       }
     };
-
     
     const contract = await getContract();
     const result = await contract.methods.look_for_match(dnaSample);
-    
-    console.log(result);
-
 
     return {
       success: true,
@@ -224,7 +219,7 @@ async function addSnp(caseNumber, snpArray) {
 
     const contract = await getContract()
     const result = await contract.methods.add_dna_sample(dnaSample, caseNumber);
-
+    
     return {
       success: true,
       message: '',
@@ -250,6 +245,8 @@ async function addPerson(caseNumber, personalData) {
     const contract = await getContract()
     const result = await contract.methods.add_human(caseNumber, human, personalData)
 
+    console.log(result)
+
     return {
       success: true,
       message: '',
@@ -269,7 +266,6 @@ async function getTotalUsers() {
     const contract = await getContract();
     const result = await contract.methods.get_total_users();
 
-    console.log(result);
     return {
       success: true,
       payload: result.decodedResult
@@ -288,7 +284,6 @@ async function getTotalHumans() {
     const contract = await getContract();
     const result = await contract.methods.get_total_humans();
 
-    console.log(result);
     return {
       success: true,
       payload: result.decodedResult
@@ -308,7 +303,6 @@ async function getTotalSamples() {
     const contract = await getContract();
     const result = await contract.methods.get_total_registered_samples();
 
-    console.log(result);
     return {
       success: true,
       payload: result.decodedResult
@@ -336,8 +330,6 @@ if (refreshTotalSamples) {
     this.children[0].classList.add('fa-spin')
     const result = await getTotalSamples();
     
-    console.log(result);
-    
     if (result.success) {
       this.remove()
       document.getElementById('total-sample-text').innerText = result.payload
@@ -353,8 +345,6 @@ if (refreshTotalHumans) {
     this.children[0].classList.add('fa-spin')
     const result = await getTotalHumans();
     
-    console.log(result);
-    
     if (result.success) {
       this.remove()
       document.getElementById('total-humans-text').innerText = result.payload
@@ -369,8 +359,6 @@ if (refreshTotalUsers) {
   refreshTotalUsers.addEventListener("click", async function(){
     this.children[0].classList.add('fa-spin')
     const result = await getTotalUsers();
-    
-    console.log(result);
     
     if (result.success) {
       this.remove()
@@ -414,13 +402,21 @@ async function coincidenciasStr(e) {
 
   if (result.success) {
     const tbody = document.getElementById('resultsTabe').getElementsByTagName('tbody')[0];
-    result.payload.forEach(e => {
+
+    if(result.payload === undefined || result.payload.length == 0){
       const newRow = tbody.insertRow();
 
       const cell = newRow.insertCell(0);
-      cell.innerHTML = e.case_number;
-      return;
-    })
+      cell.innerHTML = 'No hay coincidencias.';
+    } else {
+      result.payload.forEach(e => {
+        const newRow = tbody.insertRow();
+
+        const cell = newRow.insertCell(0);
+        cell.innerHTML = e.case_number;
+        return;
+      })
+    }
 
     $('#modal').modal('toggle')
 
@@ -451,13 +447,21 @@ async function coincidenciasSnip(e) {
 
   if(result.success) {
     const tbody = document.getElementById('resultsTabe').getElementsByTagName('tbody')[0];
-    result.payload.forEach(e => {
+
+    if(result.payload === undefined || result.payload.length == 0){
       const newRow = tbody.insertRow();
 
       const cell = newRow.insertCell(0);
-      cell.innerHTML = e.case_number;
-      return;
-    })
+      cell.innerHTML = 'No hay coincidencias.';
+    } else {
+      result.payload.forEach(e => {
+        const newRow = tbody.insertRow();
+
+        const cell = newRow.insertCell(0);
+        cell.innerHTML = e.case_number;
+        return;
+      })
+    }
     
     $('#modal').modal('toggle')
 
@@ -525,9 +529,7 @@ async function userLogin(e) {
   document.getElementById("submitLogin").classList.add("disabled");
   document.getElementById("submitLogin").disabled = true;
 
-  console.log('Before userRegistrion()');
   const result = await userRegistration();
-  console.log('After userRegistrion()');
 
   document.getElementById("submitLogin").classList.remove("running");
   document.getElementById("submitLogin").classList.remove("disabled");
@@ -617,7 +619,7 @@ async function searchMuestra(e) {
   document.getElementById("lupa-icon").classList.remove("fa-search")
 
   const result = await askNumberCase(documentId);
-  console.log(result);
+
   if(result.success) {
     document.getElementById('search-result').innerHTML = result.hash;
   } else {

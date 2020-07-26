@@ -58,18 +58,18 @@ async function matchStr(strArray) {
     const strArrayObjects = strArray.map((e) => {
       return {
         name: e[0],
-        value1: e[1],
-        value2: e[2]
+        value1: parseInt(e[1]),
+        value2: parseInt(e[2])
       }
     });
     const dnaSample = {
       system: {
         id: STRID,
-        name: SNP
+        name: STR
       },
       analysis: {
         doneDate: new Date().toISOString(),
-        case_number: 'not_need_for_this_method',
+        case_number: 'caseNumber',
         snp_result: [],
         str_result: strArrayObjects
       }
@@ -78,7 +78,6 @@ async function matchStr(strArray) {
     const contract = await getContract();
     const result = await contract.methods.look_for_match(dnaSample);
 
-    console.log(result);
     return {
       success: true,
       payload: result.decodedResult
@@ -101,18 +100,14 @@ async function matchSnp(snpArray) {
       },
       analysis: {
         doneDate: new Date().toISOString(),
-        case_number: 'not_need_for_this_method',
+        case_number: 'caseNumber',
         snp_result: snpArray,
         str_result: []
       }
     };
-
     
     const contract = await getContract();
     const result = await contract.methods.look_for_match(dnaSample);
-    
-    console.log(result);
-
 
     return {
       success: true,
@@ -223,7 +218,7 @@ async function addSnp(caseNumber, snpArray) {
 
     const contract = await getContract()
     const result = await contract.methods.add_dna_sample(dnaSample, caseNumber);
-
+    
     return {
       success: true,
       message: '',
@@ -249,6 +244,8 @@ async function addPerson(caseNumber, personalData) {
     const contract = await getContract()
     const result = await contract.methods.add_human(caseNumber, human, personalData)
 
+    console.log(result)
+
     return {
       success: true,
       message: '',
@@ -268,7 +265,6 @@ async function getTotalUsers() {
     const contract = await getContract();
     const result = await contract.methods.get_total_users();
 
-    console.log(result);
     return {
       success: true,
       payload: result.decodedResult
@@ -287,7 +283,6 @@ async function getTotalHumans() {
     const contract = await getContract();
     const result = await contract.methods.get_total_humans();
 
-    console.log(result);
     return {
       success: true,
       payload: result.decodedResult
@@ -307,7 +302,6 @@ async function getTotalSamples() {
     const contract = await getContract();
     const result = await contract.methods.get_total_registered_samples();
 
-    console.log(result);
     return {
       success: true,
       payload: result.decodedResult
@@ -335,8 +329,6 @@ if (refreshTotalSamples) {
     this.children[0].classList.add('fa-spin')
     const result = await getTotalSamples();
     
-    console.log(result);
-    
     if (result.success) {
       this.remove()
       document.getElementById('total-sample-text').innerText = result.payload
@@ -352,8 +344,6 @@ if (refreshTotalHumans) {
     this.children[0].classList.add('fa-spin')
     const result = await getTotalHumans();
     
-    console.log(result);
-    
     if (result.success) {
       this.remove()
       document.getElementById('total-humans-text').innerText = result.payload
@@ -368,8 +358,6 @@ if (refreshTotalUsers) {
   refreshTotalUsers.addEventListener("click", async function(){
     this.children[0].classList.add('fa-spin')
     const result = await getTotalUsers();
-    
-    console.log(result);
     
     if (result.success) {
       this.remove()
@@ -413,13 +401,21 @@ async function coincidenciasStr(e) {
 
   if (result.success) {
     const tbody = document.getElementById('resultsTabe').getElementsByTagName('tbody')[0];
-    result.payload.forEach(e => {
+
+    if(result.payload === undefined || result.payload.length == 0){
       const newRow = tbody.insertRow();
 
       const cell = newRow.insertCell(0);
-      cell.innerHTML = e.case_number;
-      return;
-    })
+      cell.innerHTML = 'No hay coincidencias.';
+    } else {
+      result.payload.forEach(e => {
+        const newRow = tbody.insertRow();
+
+        const cell = newRow.insertCell(0);
+        cell.innerHTML = e.case_number;
+        return;
+      })
+    }
 
     $('#modal').modal('toggle')
 
@@ -450,13 +446,21 @@ async function coincidenciasSnip(e) {
 
   if(result.success) {
     const tbody = document.getElementById('resultsTabe').getElementsByTagName('tbody')[0];
-    result.payload.forEach(e => {
+
+    if(result.payload === undefined || result.payload.length == 0){
       const newRow = tbody.insertRow();
 
       const cell = newRow.insertCell(0);
-      cell.innerHTML = e.case_number;
-      return;
-    })
+      cell.innerHTML = 'No hay coincidencias.';
+    } else {
+      result.payload.forEach(e => {
+        const newRow = tbody.insertRow();
+
+        const cell = newRow.insertCell(0);
+        cell.innerHTML = e.case_number;
+        return;
+      })
+    }
     
     $('#modal').modal('toggle')
 
@@ -524,9 +528,7 @@ async function userLogin(e) {
   document.getElementById("submitLogin").classList.add("disabled");
   document.getElementById("submitLogin").disabled = true;
 
-  console.log('Before userRegistrion()');
   const result = await userRegistration();
-  console.log('After userRegistrion()');
 
   document.getElementById("submitLogin").classList.remove("running");
   document.getElementById("submitLogin").classList.remove("disabled");
@@ -616,7 +618,7 @@ async function searchMuestra(e) {
   document.getElementById("lupa-icon").classList.remove("fa-search")
 
   const result = await askNumberCase(documentId);
-  console.log(result);
+
   if(result.success) {
     document.getElementById('search-result').innerHTML = result.hash;
   } else {
