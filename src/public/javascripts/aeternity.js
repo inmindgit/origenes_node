@@ -1,4 +1,6 @@
 const fs = require("fs");
+const CryptoJS = require("crypto-js");
+const SECRET_KEY = 'secret-key'
 const NODE_URL = 'https://testnet.aeternity.io';
 const COMPILER_URL = 'https://compiler.aeternity.io';
 const CONTRACT_ADDRESS = 'ct_mZSovG64QKKV1DQDRNgBgAA2NcyZjg1CmwR659mK1ToUex3TP';
@@ -700,3 +702,25 @@ $('form input[type=text],textarea').on('change invalid', function() {
     textfield.setCustomValidity('Debe completar este campo');
   }
 });
+
+// crypto services
+function encrypt(string) {
+  try {
+    const encryptedString = CryptoJS.AES.encrypt(string, SECRET_KEY).toString();
+
+    return encryptedString;
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+function decrypt(string) {
+  try {
+    const bytes = CryptoJS.AES.decrypt(encryptedString, SECRET_KEY);
+    const originalString = bytes.toString(CryptoJS.enc.Utf8);
+
+    return originalString;
+  } catch (e) {
+    console.log(e)
+  }
+} 
