@@ -14,6 +14,7 @@ var usersRouter = require('./src/routes/users');
 var muestrasRouter = require('./src/routes/muestras');
 var resultadosRouter = require('./src/routes/resultados');
 var coincidenciasRouter = require('./src/routes/coincidencias');
+var fs = require('fs');
 var app = express();
 
 app.use(session({
@@ -30,7 +31,10 @@ app.use(flash());
 app.set('views', path.join(__dirname, './src/views'));
 app.set('view engine', 'pug');
 
-app.use(logger('dev'));
+
+var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+app.use(logger('dev', { stream: accessLogStream }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

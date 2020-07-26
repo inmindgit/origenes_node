@@ -35,12 +35,18 @@ async function aeternityClient(keypair) {
   }
 };
 
+async function getKeypair(){
+  const keypairs = await JSON.parse(window.localStorage.getItem('keypair'));
+  if(!keypairs) {
+    throw 'No posee el par de claves para el acceso.';
+  }
+
+  return keypairs;
+}
+
 async function getContract() {
   try {
-    const keypair = await JSON.parse(window.localStorage.getItem('keypair'));
-    if(!keypair) {
-      throw 'No posee el par de claves para el acceso.';
-    }
+    const keypair = await getKeypair()
 
     const contractSource = fs.readFileSync(__dirname + "/contract/FreedomOrigins.aes", "utf-8");
     const client = await aeternityClient(keypair);
@@ -111,6 +117,8 @@ async function matchSnp(snpArray) {
     const contract = await getContract();
     const result = await contract.methods.look_for_match(dnaSample);
 
+    sendAudit('look_for_match');
+
     return {
       success: true,
       payload: result.decodedResult
@@ -128,7 +136,9 @@ async function userRegistration() {
   try {
     const contract = await getContract();
     const result = await contract.methods.user_registration();
-
+    
+    sendAudit('user_registration');
+    
     return {
       success: true,
       payload: result.decodedResult.profile
@@ -145,7 +155,9 @@ async function askNumberCase(documentID) {
   try {
     const contract = await getContract();
     const result = await contract.methods.ask_for_sample_dna_test(documentID);
-
+    
+    sendAudit('ask_for_sample_dna_test');
+    
     return {
       success: true,
       message: '',
@@ -186,6 +198,8 @@ async function addStr(caseNumber, strArray) {
 
     const contract = await getContract();
     const result = await contract.methods.add_dna_sample(dnaSample, caseNumber);
+    
+    sendAudit('add_dna_sample STR');
 
     return {
       success: true,
@@ -221,6 +235,8 @@ async function addSnp(caseNumber, snpArray) {
     const contract = await getContract()
     const result = await contract.methods.add_dna_sample(dnaSample, caseNumber);
     
+    sendAudit('add_dna_sample SNP');
+
     return {
       success: true,
       message: '',
@@ -244,9 +260,10 @@ async function addPerson(caseNumber, personalData) {
     };
 
     const contract = await getContract()
+
     const result = await contract.methods.add_human(caseNumber, human, personalData)
 
-    console.log(result)
+    sendAudit('add_human');
 
     return {
       success: true,
@@ -720,4 +737,21 @@ function decrypt(string) {
   } catch (e) {
     console.log(e)
   }
-} 
+}
+
+async function sendAudit(functionName) {
+  const dateTime = new Date().toISOString();
+  const keypair = await getKeypair()
+
+  fetch('/audit', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify({ 
+      dateTime: dateTime,
+      callerAddress: keypair.publicKey,
+      functionName: functionName
+    })
+  });
+}
