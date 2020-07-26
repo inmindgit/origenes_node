@@ -1,3 +1,4 @@
+include "List.aes"
 contract FreedomOrigins =
   record file_Storage = {
          file_storage_id:int,
@@ -162,19 +163,19 @@ contract FreedomOrigins =
     true
 
   function there_is_match_str(str1:list(sTRIndicator),str2:list(sTRIndicator),fail_count:int): bool =
-      if (fail_count==3)
-        false
-      else
-        switch(str1)
-          [] => fail_count<3
-          x::tail=>
-            switch(str2)
-              [] => fail_count<3
-              y::ytail => 
-                if(!(x.value2==y.value1||x.value1==y.value2||x.value1==y.value1||x.value2==y.value2))
-                  there_is_match_str(tail,ytail,fail_count+1)
-                else
-                  there_is_match_str(tail,ytail,fail_count)
+    if (fail_count==3)
+      false
+    else
+      switch(str1)
+        [] => fail_count<3
+        x::tail=>
+          switch(str2)
+            [] => fail_count<3
+            y::ytail => 
+              if(!(x.value2==y.value1||x.value1==y.value2||x.value1==y.value1||x.value2==y.value2))
+                there_is_match_str(tail,ytail,fail_count+1)
+              else
+                there_is_match_str(tail,ytail,fail_count)
 
   function there_is_match_snp(snp1:list(string),snp2:list(string),fail_count:int): bool =
     if (fail_count==4)
@@ -205,17 +206,25 @@ contract FreedomOrigins =
   function try_to_find_snp(snp:list(string), humans_universe:list(human)) : list(human) = 
     switch(humans_universe)
       x::tail => 
-        if(there_is_match_snp(snp,get_snp_dna_by_case_number(x.case_number),0))
-          x::try_to_find_snp(snp,tail)
+        let dna=get_snp_dna_by_case_number(x.case_number)
+        if(!List.is_empty(dna)) 
+          if(there_is_match_snp(snp,get_snp_dna_by_case_number(x.case_number),0))
+            x::try_to_find_snp(snp,tail)
+          else
+            try_to_find_snp(snp,tail)
         else
           try_to_find_snp(snp,tail)
       []=>[]
 
   function try_to_find_str(str:list(sTRIndicator), humans_universe:list(human)) : list(human) = 
     switch(humans_universe)
-      x::tail => 
-        if(there_is_match_str(str,get_str_dna_by_case_number(x.case_number),0))
-          x::try_to_find_str(str,tail)
+      x::tail =>
+        let dna=get_str_dna_by_case_number(x.case_number)
+        if(!List.is_empty(dna)) 
+          if(there_is_match_str(str,dna,0))
+            x::try_to_find_str(str,tail)
+          else
+            try_to_find_str(str,tail)
         else
           try_to_find_str(str,tail)
       []=>[]
