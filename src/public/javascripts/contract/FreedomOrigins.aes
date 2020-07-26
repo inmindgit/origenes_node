@@ -96,8 +96,9 @@ contract FreedomOrigins =
 
   function isViewer() =
     if(Call.caller!=Contract.creator)
-      require(Map.member(Call.caller,state.platform_users),"not allowed")
-      require(state.platform_users[Call.caller].profile.name=="Viewer","not allowed")
+      if (state.platform_users[Call.caller].profile.name!="Operator")
+        require(Map.member(Call.caller,state.platform_users),"not allowed")
+        require(state.platform_users[Call.caller].profile.name=="Viewer","not allowed")
 
   function isOwner() =
     require (Call.caller==Contract.creator,"Not allowed")
