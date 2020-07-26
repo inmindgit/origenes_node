@@ -1,4 +1,4 @@
-const OPERATOR_ROUTES = ['/muestras/new', '/muestras/create', '/muestras/search', '/muestras/find'];
+const OPERATOR_ROUTES = ['/muestras/new', '/muestras/create', '/muestras/search', '/coincidencias/find'];
 const LAB_ROUTES = ['/resultados/new', '/resultados/createSNP', '/resultados/createSTR']
 const VIEWER_ROUTES = ['/coincidencias/find', '/coincidencias/search']
 
