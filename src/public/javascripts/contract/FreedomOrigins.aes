@@ -230,7 +230,6 @@ contract FreedomOrigins =
       []=>[]
     
   entrypoint look_for_match(sample_to_find_match:dNA_Sample):list(human) = 
-    isOperator()
     isViewer()
     switch(sample_to_find_match.system.name)
       "SNP" => try_to_find_snp(sample_to_find_match.analysis.snp_result,state.lhumans)

@@ -3,7 +3,7 @@ const CryptoJS = require("crypto-js");
 const SECRET_KEY = 'secret-key'
 const NODE_URL = 'https://testnet.aeternity.io';
 const COMPILER_URL = 'https://compiler.aeternity.io';
-const CONTRACT_ADDRESS = 'ct_mZSovG64QKKV1DQDRNgBgAA2NcyZjg1CmwR659mK1ToUex3TP';
+const CONTRACT_ADDRESS = 'ct_n6UEpjmWPVa5ckPY5fv4LTSuuonc5GT4PA2DCxBDcizrMCbju';
 const SNP = 'SNP';
 const STR = 'STR';
 const SNPID = 1;
@@ -575,21 +575,18 @@ async function crearMuestra(e) {
   var registryCountry = document.getElementsByName('registryCountry')[0].value;
   var laboratoryOfOrigin = document.getElementsByName('laboratoryOfOrigin')[0].value;
 
-  const caseNumberEncrypted = caseNumber
-  const nameEncrypted = name
-  const lastNameEncrypted = lastName
-  const documentIDEncrypted = documentID
-  const registryCountryEncrypted = registryCountry
-  const identityCountryEncrypted = identityCountry
+  const nameEncrypted = encrypt(name)
+  const lastNameEncrypted = encrypt(lastName)
+  const registryCountryEncrypted = encrypt(registryCountry)
+  const identityCountryEncrypted = encrypt(identityCountry)
   
-  const personalData = new PersonalData(caseNumberEncrypted, nameEncrypted, lastNameEncrypted, documentIDEncrypted, registryCountryEncrypted, identityCountryEncrypted)
+  const personalData = new PersonalData(caseNumber, nameEncrypted, lastNameEncrypted, documentID, registryCountryEncrypted, identityCountryEncrypted)
 
   document.getElementById("crear-muestra-submit").classList.add("running");
   document.getElementById("crear-muestra-submit").classList.add("disabled");
   document.getElementById("crear-muestra-submit").disabled = true;
 
-  const result = await addPerson(caseNumberEncrypted, personalData);
-  console.log(result);
+  const result = await addPerson(caseNumber, personalData);
 
   document.getElementById("crear-muestra-submit").classList.remove("running");
   document.getElementById("crear-muestra-submit").classList.remove("disabled");
