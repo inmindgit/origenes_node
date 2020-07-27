@@ -20,7 +20,8 @@
     "morgan": "^1.9.1",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
-    "pug": "2.0.0-beta11"
+    "pug": "2.0.0-beta11",
+    "short-uuid": "^3.1.1"
   },
   "devDependencies": {
     "gulp": "^4.0.2"

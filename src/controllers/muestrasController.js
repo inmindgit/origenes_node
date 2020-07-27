@@ -2,10 +2,12 @@ const numberGeneratorService = require('../services/numberGeneratorService');
 const addPersonService = require('../services/addPersonService');
 const PersonalData = require('../models/PersonalData');
 const cryptoService = require('../services/cryptoService');
+const short = require('short-uuid');
 
 module.exports = {
   async new(req, res){
-    const number = numberGeneratorService.call();
+    const number = short("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ").generate();
+    // const number = numberGeneratorService.call();
     res.locals.message = req.flash()
     // aqui renderizar la vista correspondiente, con el `number` autogenerado como local.
     // este numero no podra ser modificado en la UI.
