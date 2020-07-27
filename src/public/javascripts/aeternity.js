@@ -158,6 +158,7 @@ async function askNumberCase(documentID) {
     
     sendAudit('ask_for_sample_dna_test');
     
+    console.log(result);
     return {
       success: true,
       message: '',
@@ -635,6 +636,7 @@ async function searchMuestra(e) {
 
   const result = await askNumberCase(documentId);
 
+  console.log(result);
   if(result.success) {
     document.getElementById('search-result').innerHTML = result.hash;
   } else {
