@@ -3,7 +3,7 @@ const CryptoJS = require("crypto-js");
 const SECRET_KEY = 'secret-key'
 const NODE_URL = 'https://testnet.aeternity.io';
 const COMPILER_URL = 'https://compiler.aeternity.io';
-const CONTRACT_ADDRESS = 'ct_2ZUcoh8SayoHPuYYTp3E3XcCFREYsvi8AogL9RfvviGvGzzmJ4';
+const CONTRACT_ADDRESS = 'ct_2QogBP7UnhVaZzSRcRWkxcnWrJ5B515BuAPsaefcooUvRhxexB';
 const SNP = 'SNP';
 const STR = 'STR';
 const SNPID = 1;
@@ -161,7 +161,7 @@ async function askNumberCase(documentID) {
     return {
       success: true,
       message: '',
-      hash: result.decodedResult
+      payload: result.decodedResult
     }
   } catch (e) {
     console.log(e)
@@ -635,8 +635,13 @@ async function searchMuestra(e) {
 
   const result = await askNumberCase(documentId);
 
+  console.log(result);
   if(result.success) {
-    document.getElementById('search-result').innerHTML = result.hash;
+    const caseNumber = result.payload.case_number;
+    const fullName = `${decrypt(result.payload.personal_data.name)} ${decrypt(result.payload.personal_data.last_name)}`;
+    const registryCountry = decrypt(result.payload.personal_data.registry_country)
+    const identityCountry = decrypt(result.payload.personal_data.identity_country)
+    document.getElementById('search-result').innerHTML = `Núm. de actuación: <b>${ caseNumber }</b>. <br />Nombre Completo: <b>${ fullName }</b>.<br/>País de Registro: <b>${ registryCountry }</b>.<br/>País de Nacimiento: <b>${ identityCountry }</b>.`;
   } else {
     document.getElementById('search-result').innerHTML = "Error: " + result.message;
   }
@@ -730,7 +735,7 @@ function encrypt(string) {
 
 function decrypt(string) {
   try {
-    const bytes = CryptoJS.AES.decrypt(encryptedString, SECRET_KEY);
+    const bytes = CryptoJS.AES.decrypt(string, SECRET_KEY);
     const originalString = bytes.toString(CryptoJS.enc.Utf8);
 
     return originalString;
