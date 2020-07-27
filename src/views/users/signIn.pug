@@ -2,9 +2,9 @@ extends ../layout
 
 block content
   .row
-    .col-8
-    .col-4
-      .login-box
+    //- .col-md-8
+    .col-md-6.col-sm-6.col-xs-6
+      .login-box.mb-5
         .login-logo
           //- img(src="/images/LOGOWEB.png" class="origenes-logo")
           b Orígenes
@@ -23,14 +23,7 @@ block content
                   .input-group-text
                     span.fas.fa-lock
               .row
-                .col-8
-                  //- .icheck-primary
-                    input#remember(type='checkbox')
-                    label.ml-2.text-muted(for='remember')
-                      | Recuérdame
-                // /.col
-                .col-4
+                //- .col-md-8
+                .col-md-12.col-sm-12.col-xs-12
                   button.btn.btn-primary.ld-ext-right.btn-block(id="submitLogin" type='submit') Entrar
                     .ld.ld-ring.ld-spin
-
-                // /.col
