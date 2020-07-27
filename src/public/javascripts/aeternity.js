@@ -85,7 +85,7 @@ async function matchStr(strArray) {
 
     const contract = await getContract();
     const result = await contract.methods.look_for_match(dnaSample);
-
+    
     return {
       success: true,
       payload: result.decodedResult
@@ -116,6 +116,8 @@ async function matchSnp(snpArray) {
     
     const contract = await getContract();
     const result = await contract.methods.look_for_match(dnaSample);
+
+    console.log(result)
 
     sendAudit('look_for_match');
 
@@ -430,8 +432,10 @@ async function coincidenciasStr(e) {
       result.payload.forEach(e => {
         const newRow = tbody.insertRow();
 
-        const cell = newRow.insertCell(0);
-        cell.innerHTML = e.case_number;
+        const cell0 = newRow.insertCell(0);
+        cell0.innerHTML = e.case_number;
+        const cell1 = newRow.insertCell(1);
+        cell1.innerHTML = e.personal_data.document_id;
         return;
       })
     }
@@ -477,6 +481,8 @@ async function coincidenciasSnip(e) {
 
         const cell = newRow.insertCell(0);
         cell.innerHTML = e.case_number;
+        const cell1 = newRow.insertCell(1);
+        cell1.innerHTML = e.personal_data.document_id;
         return;
       })
     }
@@ -760,3 +766,17 @@ async function sendAudit(functionName) {
     })
   });
 }
+
+
+document.getElementsByName('marcadores[]').forEach( (e) => {
+  e.addEventListener("focusout", function(){
+    const x = this.value;
+    if (x == "00" || x == "01" || x == "10" || x == "11") {
+      return
+    }else if (x == ""){
+      return
+    }else{
+      alertBox('Valor inválido', 'Los valores válidos son: 00 - 01 - 10 - 11')
+    }
+  });
+});
