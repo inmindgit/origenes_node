@@ -641,7 +641,7 @@ async function searchMuestra(e) {
     const fullName = `${decrypt(result.payload.personal_data.name)} ${decrypt(result.payload.personal_data.last_name)}`;
     const registryCountry = decrypt(result.payload.personal_data.registry_country)
     const identityCountry = decrypt(result.payload.personal_data.identity_country)
-    document.getElementById('search-result').innerHTML = `Núm. de actuación: ${ caseNumber }. <br />Nombre Completo: ${ fullName }.<br/>País de Registro: ${ registryCountry }.<br/>País de Nacimiento: ${ identityCountry }.`;
+    document.getElementById('search-result').innerHTML = `Núm. de actuación: <b>${ caseNumber }</b>. <br />Nombre Completo: <b>${ fullName }</b>.<br/>País de Registro: <b>${ registryCountry }</b>.<br/>País de Nacimiento: <b>${ identityCountry }</b>.`;
   } else {
     document.getElementById('search-result').innerHTML = "Error: " + result.message;
   }
