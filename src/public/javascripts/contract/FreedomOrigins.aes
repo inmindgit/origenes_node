@@ -12,6 +12,7 @@ contract FreedomOrigins =
       document_id:string,
       registry_country:string,
       identity_country:string,
+      sample_origin_country:string,
       name:string,
       last_name:string,
       address:string,
