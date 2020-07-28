@@ -3,7 +3,7 @@ const CryptoJS = require("crypto-js");
 const SECRET_KEY = 'secret-key'
 const NODE_URL = 'https://testnet.aeternity.io';
 const COMPILER_URL = 'https://compiler.aeternity.io';
-const CONTRACT_ADDRESS = 'ct_2QogBP7UnhVaZzSRcRWkxcnWrJ5B515BuAPsaefcooUvRhxexB';
+const CONTRACT_ADDRESS = 'ct_2LtMFqVPjaxov6DSi3MPMoP2VnAfrYmgURcg4EbvCsEA1XRcVf';
 const SNP = 'SNP';
 const STR = 'STR';
 const SNPID = 1;
@@ -568,11 +568,12 @@ async function userLogin(e) {
 }
 
 class PersonalData {
-  constructor(caseNumber, name, lastName, documentID, registryCountry, identityCountry){
+  constructor(caseNumber, name, lastName, documentID, registryCountry, identityCountry, laboratoryOfOrigin){
     this.case_number = caseNumber,
     this.document_id = documentID,
     this.registry_country = registryCountry,
     this.identity_country = identityCountry,
+    this.sample_origin_country = laboratoryOfOrigin,
     this.name = name,
     this.last_name = lastName,
     this.address = 'address',
@@ -602,8 +603,9 @@ async function crearMuestra(e) {
   const lastNameEncrypted = encrypt(lastName)
   const registryCountryEncrypted = encrypt(registryCountry)
   const identityCountryEncrypted = encrypt(identityCountry)
+  const laboratoryOfOriginEncrypted = encrypt(laboratoryOfOrigin)
   
-  const personalData = new PersonalData(caseNumber, nameEncrypted, lastNameEncrypted, documentID, registryCountryEncrypted, identityCountryEncrypted)
+  const personalData = new PersonalData(caseNumber, nameEncrypted, lastNameEncrypted, documentID, registryCountryEncrypted, identityCountryEncrypted, laboratoryOfOriginEncrypted)
 
   document.getElementById("crear-muestra-submit").classList.add("running");
   document.getElementById("crear-muestra-submit").classList.add("disabled");
@@ -647,7 +649,8 @@ async function searchMuestra(e) {
     const fullName = `${decrypt(result.payload.personal_data.name)} ${decrypt(result.payload.personal_data.last_name)}`;
     const registryCountry = decrypt(result.payload.personal_data.registry_country)
     const identityCountry = decrypt(result.payload.personal_data.identity_country)
-    document.getElementById('search-result').innerHTML = `Núm. de actuación: <b>${ caseNumber }</b>. <br />Nombre Completo: <b>${ fullName }</b>.<br/>País de Registro: <b>${ registryCountry }</b>.<br/>País de Nacimiento: <b>${ identityCountry }</b>.`;
+    const laboratoryOfOrigin = decrypt(result.payload.personal_data.sample_origin_country)
+    document.getElementById('search-result').innerHTML = `Núm. de actuación: <b>${ caseNumber }</b>. <br />Nombre Completo: <b>${ fullName }</b>.<br/>País de Registro: <b>${ registryCountry }</b>.<br/>País de Nacimiento: <b>${ identityCountry }</b>.<br/>País de precedencia: <b>${ laboratoryOfOrigin }</b>.`;
   } else {
     document.getElementById('search-result').innerHTML = "Error: " + result.message;
   }
@@ -719,7 +722,7 @@ function alertWithRedirect(title, hash, url){
 
 
 // required: true with custom message
-$('form input[type=text],textarea').on('change invalid', function() {
+$('form input[type=text],input[type=number],textarea').on('change invalid', function() {
   var textfield = $(this).get(0);
   textfield.setCustomValidity('');
   
